@@ -44,7 +44,7 @@ namespace BlockModelReader
             from block in blocks
             where block.GetCoordinates()[0] == xCoordinate
             select block;
-            return filteringQuery.ToList<Block>();
+            return filteringQuery.ToList();
 
         }
 
@@ -54,7 +54,7 @@ namespace BlockModelReader
             from block in blocks
             where block.GetCoordinates()[0] == yCoordinate
             select block;
-            return filteringQuery.ToList<Block>();
+            return filteringQuery.ToList();
 
         }
 
@@ -64,7 +64,7 @@ namespace BlockModelReader
             from block in blocks
             where block.GetCoordinates()[0] == zCoordinate
             select block;
-            return filteringQuery.ToList<Block>();
+            return filteringQuery.ToList();
         }
 
         public Block SimpleCoordsQuery(int xCoordinate, int yCoordinate, int zCoordinate)
@@ -74,6 +74,14 @@ namespace BlockModelReader
             where block.GetCoordinates()[0] == xCoordinate
             select block;
             return filteringQuery.First();
+        }
+
+        public void ConsoleLoop()
+        {
+            while (true)
+            {
+
+            }
         }
     }
 }

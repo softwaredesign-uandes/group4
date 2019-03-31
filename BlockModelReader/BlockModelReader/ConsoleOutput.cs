@@ -8,6 +8,5 @@ namespace BlockModelReader
 {
     static class ConsoleOutput
     {
-
     }
 }
