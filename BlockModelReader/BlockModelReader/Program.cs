@@ -16,7 +16,7 @@ namespace BlockModelReader
             Console.Write("Name of the file: ");
             string fileName = Console.ReadLine().ToLower();
             FileReader.ReadFile(blockModel, fileName, fileName+".blocks");
-            ConsoleOutput.ConsoleLoop(blockModel);
+            ConsoleOutput.ConsoleLoop(blockModel, fileName);
         }
     }
 }

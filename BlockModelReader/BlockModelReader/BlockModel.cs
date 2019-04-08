@@ -59,6 +59,8 @@ namespace BlockModelReader
             IEnumerable<Block> filteringQuery =
             from block in blocks
             where block.GetCoordinates()[0] == xCoordinate
+            && block.GetCoordinates()[1] == yCoordinate
+            && block.GetCoordinates()[2] == zCoordinate
             select block;
             return filteringQuery.First();
         }
