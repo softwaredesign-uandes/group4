@@ -9,6 +9,20 @@ namespace BlockModelReader
 {
     static class FileReader
     {
+        public static void ReadFile(BlockModel blockModel, string format, string path)
+        {
+
+            switch (format)
+            {
+                case "marvin":
+                    blockModel.blocks = ReadMarvinFile(path);
+                    break;
+                case "zucc_small":
+                    blockModel.blocks = ReadZuccSmallFile(path);
+                    break;
+            }
+        }
+
         public static List<Block> ReadMarvinFile(string path)
         {
             List<Block> result = new List<Block>();
