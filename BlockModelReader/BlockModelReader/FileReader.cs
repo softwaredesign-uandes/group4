@@ -9,6 +9,20 @@ namespace BlockModelReader
 {
     static class FileReader
     {
+        public static void ReadFile(BlockModel blockModel, string format, string path)
+        {
+
+            switch (format)
+            {
+                case "marvin":
+                    blockModel.blocks = ReadMarvinFile(path);
+                    break;
+                case "zuck_small":
+                    blockModel.blocks = ReadZuckSmallFile(path);
+                    break;
+            }
+        }
+
         public static List<Block> ReadMarvinFile(string path)
         {
             List<Block> result = new List<Block>();
@@ -30,7 +44,7 @@ namespace BlockModelReader
             return result;
         }
 
-        public static List<Block> ReadZuccSmallFile(string path)
+        public static List<Block> ReadZuckSmallFile(string path)
         {
             List<Block> result = new List<Block>();
             foreach (string line in File.ReadLines(path, Encoding.UTF8))

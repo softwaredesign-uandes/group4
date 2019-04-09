@@ -18,6 +18,7 @@ namespace BlockModelReader
             this.xCoordinate = xCoordinate;
             this.yCoordinate = yCoordinate;
             this.zCoordinate = zCoordinate;
+            this.weight = weight;
             this.grades = new Dictionary<string, double>();
             this.additionalData = new Dictionary<string, double>();
         }
@@ -38,6 +39,7 @@ namespace BlockModelReader
             this.xCoordinate = xCoordinate;
             this.yCoordinate = yCoordinate;
             this.zCoordinate = zCoordinate;
+            this.weight = weight;
             this.grades = grades;
             this.additionalData = additionalData;
         }
@@ -60,6 +62,16 @@ namespace BlockModelReader
         public int[] GetCoordinates()
         {
             return new [] { xCoordinate, yCoordinate, zCoordinate };
+        }
+
+        public double GetWeight()
+        {
+            return weight;
+        }
+
+        public Dictionary<string, double> GetGrades()
+        {
+            return grades;
         }
     }
 }

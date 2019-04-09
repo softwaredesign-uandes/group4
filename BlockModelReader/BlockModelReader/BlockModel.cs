@@ -9,24 +9,11 @@ namespace BlockModelReader
 {
     class BlockModel
     {
-        private List<Block> blocks;
+        public List<Block> blocks;
 
         public BlockModel()
         {
 
-        }
-
-        public void ReadFile(string format, string path)
-        {
-            switch (format)
-            {
-                case "marvin":
-                    blocks = FileReader.ReadMarvinFile(path);
-                    break;
-                case "zucc_small":
-                    blocks = FileReader.ReadMarvinFile(path);
-                    break;
-            }
         }
 
         public Block SimpleIdQuery(int id)
@@ -72,16 +59,10 @@ namespace BlockModelReader
             IEnumerable<Block> filteringQuery =
             from block in blocks
             where block.GetCoordinates()[0] == xCoordinate
+            && block.GetCoordinates()[1] == yCoordinate
+            && block.GetCoordinates()[2] == zCoordinate
             select block;
             return filteringQuery.First();
-        }
-
-        public void ConsoleLoop()
-        {
-            while (true)
-            {
-
-            }
         }
     }
 }

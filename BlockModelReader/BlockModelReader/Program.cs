@@ -8,10 +8,15 @@ namespace BlockModelReader
 {
     class Program
     {
+
         static void Main(string[] args)
         {
             BlockModel blockModel = new BlockModel();
-            blockModel.ReadFile("marvin", "marvin.blocks");
+            Console.WriteLine("Block Model Loader");
+            Console.Write("Name of the file: ");
+            string fileName = Console.ReadLine().ToLower();
+            FileReader.ReadFile(blockModel, fileName, fileName+".blocks");
+            ConsoleOutput.ConsoleLoop(blockModel, fileName);
         }
     }
 }
