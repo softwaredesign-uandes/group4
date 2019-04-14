@@ -8,6 +8,31 @@ namespace BlockModelReader
 {
     static class ConsoleOutput
     {
+
+        public static void PrintStatistics(BlockModel blockModel)
+        {
+            int totalBlocks = blockModel.blocks.Count;
+            double totalWeight = 0;
+            int airBlocks = 0;
+            double totalMineralWeight = 0;
+            foreach (var block in blockModel.blocks)
+            {
+                Dictionary<string, double> grades = block.GetGrades();
+                totalWeight += block.GetWeight();
+                if (block.GetWeight() == 0) airBlocks++;
+                foreach (var grade in block.GetGrades().Values)
+                {
+                    totalMineralWeight += grade*block.GetWeight();
+                }
+            }
+            double airBlocksPercentage = airBlocks / totalBlocks;
+            Console.WriteLine("Statistics");
+            Console.WriteLine("1.-Number of Blocks: " + totalBlocks);
+            Console.WriteLine("2.-Total Weight of the Deposit: " + totalWeight);
+            Console.WriteLine("3.-Total Mineral Weight: " + totalMineralWeight);
+            Console.WriteLine("4.-Air Blocks percentage: " + airBlocksPercentage);
+
+        }
         public static void ConsoleLoop(BlockModel blockModel, string fileName)
         {
             while (true)
@@ -17,9 +42,9 @@ namespace BlockModelReader
                 int zCoordinate;
                 Console.WriteLine("x coordinate of the block");
                 string xCoordinateString = Console.ReadLine();
-                Console.WriteLine("x coordinate of the block");
+                Console.WriteLine("y coordinate of the block");
                 string yCoordinateString = Console.ReadLine();
-                Console.WriteLine("x coordinate of the block");
+                Console.WriteLine("z coordinate of the block");
                 string zCoordinateString = Console.ReadLine();
                 try
                 {
