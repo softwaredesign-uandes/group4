@@ -14,22 +14,27 @@ namespace BlockModelReader
             int totalBlocks = blockModel.blocks.Count;
             double totalWeight = 0;
             int airBlocks = 0;
-            double totalMineralWeight = 0;
+            Dictionary<string, double> mineralWeight = new Dictionary<string, double>();
             foreach (var block in blockModel.blocks)
             {
                 Dictionary<string, double> grades = block.GetGrades();
                 totalWeight += block.GetWeight();
                 if (block.GetWeight() == 0) airBlocks++;
-                foreach (var grade in block.GetGrades().Values)
+                foreach (var grade in grades.Keys)
                 {
-                    totalMineralWeight += grade*block.GetWeight();
+                    if (!mineralWeight.ContainsKey(grade)) mineralWeight.Add(grade, grades[grade]);
+                    else mineralWeight[grade] += grades[grade] * block.GetWeight();
                 }
             }
             double airBlocksPercentage = airBlocks / totalBlocks;
             Console.WriteLine("Statistics");
             Console.WriteLine("1.-Number of Blocks: " + totalBlocks);
             Console.WriteLine("2.-Total Weight of the Deposit: " + totalWeight);
-            Console.WriteLine("3.-Total Mineral Weight: " + totalMineralWeight);
+            Console.WriteLine("3.-Total Mineral Weight: ");
+            foreach (var mineral in mineralWeight.Keys)
+            {
+                Console.WriteLine("    *" + mineral + ": " + mineralWeight[mineral]);
+            }
             Console.WriteLine("4.-Air Blocks percentage: " + airBlocksPercentage);
 
         }
