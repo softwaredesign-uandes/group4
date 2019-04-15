@@ -8,7 +8,7 @@ using System.Data;
 
 namespace BlockModelReader
 {
-    static class FileReader
+    public static class FileReader
     {
         public static List<Block> ReadFile(BlockModel blockModel, string weightExpression, string[] gradeNames, string[] gradeExpressions, string path)
         {

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BlockModelReader
 {
-    class Block
+    public class Block
     {
         private int id, xCoordinate, yCoordinate, zCoordinate;
         private double weight;

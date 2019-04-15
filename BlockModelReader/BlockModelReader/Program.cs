@@ -30,7 +30,7 @@ namespace BlockModelReader
             }
 
             FileReader.ReadFile(blockModel, weightExpression, gradeNames, gradeExpressions, fileName + ".blocks");
-            ConsoleOutput.PrintStatistics(blockModel);
+            //ConsoleOutput.PrintStatistics(blockModel);
             ConsoleOutput.ConsoleLoop(blockModel, fileName);
             Console.ReadKey();
         }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BlockModelReader
 {
-    static class ConsoleOutput
+    public static class ConsoleOutput
     {
 
         public static void PrintStatistics(BlockModel blockModel)

@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace BlockModelReader
 {
-    class BlockModel
+    public class BlockModel
     {
         public List<Block> blocks;
 
