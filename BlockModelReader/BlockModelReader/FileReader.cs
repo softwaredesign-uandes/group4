@@ -10,7 +10,7 @@ namespace BlockModelReader
 {
     public static class FileReader
     {
-        public static List<Block> ReadFile(BlockModel blockModel, string weightExpression, string[] gradeNames, string[] gradeExpressions, string path)
+        public static List<Block> ReadFile(string weightExpression, string[] gradeNames, string[] gradeExpressions, string path)
         {
             List<Block> result = new List<Block>();
             string unmutableWeigthExpression = weightExpression;
