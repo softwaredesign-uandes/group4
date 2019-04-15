@@ -9,11 +9,21 @@ namespace BlockModelReader
 {
     public class BlockModel
     {
-        public List<Block> blocks;
+        private List<Block> blocks;
 
         public BlockModel()
         {
 
+        }
+
+        public void SetBlocks(List<Block> blocks)
+        {
+            this.blocks = blocks;
+        }
+
+        public List<Block> GetBlocks()
+        {
+            return blocks;
         }
 
         public Block SimpleIdQuery(int id)

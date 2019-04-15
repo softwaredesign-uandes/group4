@@ -11,11 +11,11 @@ namespace BlockModelReader
 
         public static void PrintStatistics(BlockModel blockModel)
         {
-            int totalBlocks = blockModel.blocks.Count;
+            int totalBlocks = blockModel.GetBlocks().Count;
             double totalWeight = 0;
             int airBlocks = 0;
             Dictionary<string, double> mineralWeight = new Dictionary<string, double>();
-            foreach (var block in blockModel.blocks)
+            foreach (var block in blockModel.GetBlocks())
             {
                 Dictionary<string, double> grades = block.GetGrades();
                 totalWeight += block.GetWeight();
@@ -26,7 +26,7 @@ namespace BlockModelReader
                     else mineralWeight[grade] += grades[grade] * block.GetWeight();
                 }
             }
-            double airBlocksPercentage = airBlocks / totalBlocks;
+            double airBlocksPercentage = airBlocks*100 / totalBlocks;
             Console.WriteLine("Statistics");
             Console.WriteLine("1.-Number of Blocks: " + totalBlocks);
             Console.WriteLine("2.-Total Weight of the Deposit: " + totalWeight);
@@ -35,7 +35,7 @@ namespace BlockModelReader
             {
                 Console.WriteLine("    *" + mineral + ": " + mineralWeight[mineral]);
             }
-            Console.WriteLine("4.-Air Blocks percentage: " + airBlocksPercentage);
+            Console.WriteLine("4.-Air Blocks percentage: " + airBlocksPercentage + "%");
 
         }
         public static void ConsoleLoop(BlockModel blockModel, string fileName)
@@ -62,15 +62,10 @@ namespace BlockModelReader
                         "Coordinate y: " + yCoordinate + "\n" +
                         "Coordintae z: " + zCoordinate + "\n" +
                         "Block Weight: " + queryResult.GetWeight());
-                    switch (fileName)
+                    Dictionary<string, double> gradesDictionary = queryResult.GetGrades();
+                    foreach (string key in gradesDictionary.Keys)
                     {
-                        case "marvin":
-                            Console.WriteLine("Gold(%): " + queryResult.GetGrades()["Au"] + "\n" +
-                            "Copper(%): " + queryResult.GetGrades()["Cu"]);
-                            break;
-                        case "zuck_small":
-                            Console.WriteLine("Ore(%): " + queryResult.GetGrades()["Ore"]);
-                            break;
+                        Console.WriteLine(key + " grade : " + gradesDictionary[key]);
                     }
    
                 }
