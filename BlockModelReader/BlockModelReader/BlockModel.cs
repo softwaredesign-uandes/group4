@@ -112,5 +112,11 @@ namespace BlockModelReader
             }
             return mineralWeight;
         }
+
+        public void ReBlock(int xAmount, int yAmount, int zAmount)
+        {
+
+        }
+
     }
 }

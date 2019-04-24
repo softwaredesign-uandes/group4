@@ -29,6 +29,7 @@ namespace BlockModelReader
             this.xCoordinate = xCoordinate;
             this.yCoordinate = yCoordinate;
             this.zCoordinate = zCoordinate;
+            this.weight = weight;
             this.grades = grades;
             //this.additionalData = new Dictionary<string, double>();
         }
