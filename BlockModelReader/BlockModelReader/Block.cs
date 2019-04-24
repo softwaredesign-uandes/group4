@@ -74,5 +74,29 @@ namespace BlockModelReader
         {
             return grades;
         }
+        public override bool Equals(object obj)
+        {
+            Block other = obj as Block;
+            if (xCoordinate != other.xCoordinate)
+            {
+                return false;
+            }
+            if (yCoordinate != other.yCoordinate)
+            {
+                return false;
+            }
+            if (weight != other.weight)
+            {
+                return false;
+            }
+            foreach(string key in grades.Keys)
+            {
+                if (grades[key] != other.grades[key])
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 }
