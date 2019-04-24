@@ -132,27 +132,24 @@ namespace BlockModelReader
         public void ReBlock(int xAmount, int yAmount, int zAmount)
         {
             int id = 0;
-            int count = blocks.Count();
+            int blockCount = blocks.Count();
             int iCount = 0;
-            for (int i = 0; i < maxX+1; i+= xAmount)
+            for (int i = 0; i < maxX + 1; i+= xAmount)
             {
-                
                 int jCount = 0;
-                for (int j = 0; j < maxY+1; j += yAmount)
+                for (int j = 0; j < maxY + 1; j += yAmount)
                 {
                     int kCount = 0;
-                    
-                    for (int k = 0; k < maxZ+1; k += zAmount)
+                    for (int k = 0; k < maxZ + 1; k += zAmount)
                     {
-                        
                         List<Block> cluster = new List<Block>();
-                        for (int ii = 0; ii < xAmount; ii++)
+                        for (int iStep = 0; iStep < xAmount; iStep++)
                         {
-                            for (int jj = 0; jj < yAmount; jj++)
+                            for (int jStep = 0; jStep < yAmount; jStep++)
                             {
-                                for (int kk = 0; kk < xAmount; kk++)
+                                for (int kStep = 0; kStep < xAmount; kStep++)
                                 {
-                                    cluster.Add(SimpleCoordsQuery(i + ii, j + jj, k + kk));
+                                    cluster.Add(SimpleCoordsQuery(i + iStep, j + jStep, k + kStep));
                                 }
                             }
                         }
@@ -190,8 +187,7 @@ namespace BlockModelReader
                 }
                 iCount++;
             }
-            blocks.RemoveRange(0, count);
+            blocks.RemoveRange(0, blockCount);
         }
-
     }
 }
