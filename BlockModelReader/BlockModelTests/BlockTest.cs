@@ -156,6 +156,8 @@ namespace BlockModelTests
             result.Add(new Block(6, 1, 1, 0, 600, g7));
             result.Add(new Block(7, 1, 1, 1, 300, g8));
 
+            blockModel.ReBlock(2, 2, 2);
+
             CollectionAssert.AreEquivalent(result, blockModel.GetBlocks());
         }
     }
