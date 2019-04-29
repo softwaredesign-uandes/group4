@@ -64,5 +64,43 @@ namespace BlockModelReader
             select block;
             return filteringQuery.First();
         }
+
+        public double TotalWeight(List<Block> blocks)
+        {
+            double totalWeight = 0;
+            foreach (Block block in blocks)
+            {
+                totalWeight += block.GetWeight();                
+            }
+            return totalWeight;
+        }
+
+        public double AirBlocksPercentage(List<Block> blocks)
+        {
+            double totalAirBlocks = 0;
+            int totalBlocks = blocks.Count();        
+            foreach (Block block in blocks)
+            {
+                if (block.GetWeight() == 0) totalAirBlocks++;
+            }
+            double airBlocksPercentage = totalAirBlocks / totalBlocks;
+            return airBlocksPercentage;
+        }
+
+        public Dictionary<string, double> MineralWeights(List<Block> blocks)
+        {
+            Dictionary<string, double> mineralWeight = new Dictionary<string, double>();
+
+            foreach (Block block in blocks)
+            {
+                Dictionary<string, double> grades = block.GetGrades();
+                foreach (var grade in grades.Keys)
+                {
+                    if (!mineralWeight.ContainsKey(grade)) mineralWeight.Add(grade, grades[grade]);
+                    else mineralWeight[grade] += grades[grade] * block.GetWeight();
+                }
+            }
+            return mineralWeight;
+        }
     }
 }
