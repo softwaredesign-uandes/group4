@@ -24,12 +24,9 @@ namespace BlockModelReader
         public void SetBlocks(List<Block> blocks)
         {
             this.blocks = blocks;
-            blocks.Where(block => block.GetCoordinates()[0] < maxX).
-                Select(block => block.GetCoordinates()[0]);
-            blocks.Where(block => block.GetCoordinates()[1] < maxX).
-                Select(block => block.GetCoordinates()[1]);
-            blocks.Where(block => block.GetCoordinates()[2] < maxX).
-                 Select(block => block.GetCoordinates()[2]);
+            maxX = blocks.Max(block => block.GetCoordinates()[0]);
+            maxY = blocks.Max(block => block.GetCoordinates()[1]);
+            maxZ = blocks.Max(block => block.GetCoordinates()[2]);
         }
 
         public List<Block> GetBlocks()
@@ -132,60 +129,50 @@ namespace BlockModelReader
             return mineralWeight;
         }
 
-        public void ReBlock(int xAmount, int yAmount, int zAmount)
+        public void ReBlock(int xReblockDimension, int yReblockDimension, int zReblockDimension)
         {
-            int id = 0;
             int blockCount = blocks.Count();
-            int iCount = 0;
-            for (int i = 0; i < maxX + 1; i+= xAmount)
-            {
-                int jCount = 0;
-                for (int j = 0; j < maxY + 1; j += yAmount)
-                {
-                    int kCount = 0;
-                    for (int k = 0; k < maxZ + 1; k += zAmount)
-                    {
-                        List<Block> cluster = GenerateReblockCluster(xAmount, yAmount, zAmount, i, j, k);
+            int xSteps = ((maxX + 1) / xReblockDimension) + 1;
+            int ySteps = ((maxY + 1) / yReblockDimension) + 1;
+            int zSteps = ((maxZ + 1) / zReblockDimension) + 1;
+            int[] numberOfIterarions = Enumerable.Range(0, xSteps * ySteps * zSteps).ToArray();
 
-                        double weight = TotalWeight(cluster);
-                        Dictionary<string, double> grades = CalculateClusterGrades(cluster, weight);
-                        blocks.Add(new Block(id, iCount, jCount, kCount, weight, grades));
-                        id++;
-                        kCount++;
-                    }
-                    jCount++;
-                }
-                iCount++;
-            }
-            blocks.RemoveRange(0, blockCount);
+            blocks = numberOfIterarions.Select(i =>
+            {
+                int x = i / (ySteps * zSteps);
+                int y = (i / zSteps) % ySteps;
+                int z = i % zSteps;
+                int cummulativeX = x * xReblockDimension;
+                int cummulativeY = y * yReblockDimension;
+                int cummulativeZ = z * zReblockDimension;
+                List<Block> cluster = GenerateReblockCluster(xReblockDimension, yReblockDimension, zReblockDimension, cummulativeX, cummulativeY, cummulativeZ);
+                double weight = TotalWeight(cluster);
+                Dictionary<string, double> grades = CalculateClusterGrades(cluster, weight);
+                return new Block(i, x, y, z, weight, grades);
+            }).ToList();
         }
 
-        private List<Block> GenerateReblockCluster(int xAmount, int yAmount, int zAmount, int startX, int startY, int startZ)
+        private List<Block> GenerateReblockCluster(int xDimension, int yDimension, int zDimension, int startX, int startY, int startZ)
         {
-            List<Block> cluster = new List<Block>();
-            for (int iStep = 0; iStep < xAmount; iStep++)
+            int[] numberOfIterarions = Enumerable.Range(0, xDimension * yDimension * zDimension).ToArray();
+            List<Block> cluster = numberOfIterarions.Select(i =>
             {
-                for (int jStep = 0; jStep < yAmount; jStep++)
-                {
-                    for (int kStep = 0; kStep < xAmount; kStep++)
-                    {
-                        cluster.Add(SimpleCoordsQuery(startX + iStep, startY + jStep, startZ + kStep));
-                    }
-                }
-            }
+                int x = i / (yDimension * zDimension);
+                int y = (i / zDimension) % yDimension;
+                int z = i % zDimension;
+                return SimpleCoordsQuery(startX + x, startY + y, startZ + z);
+            }).ToList();
             return cluster;
         }
 
         public Dictionary<string, double> CalculateClusterGrades(List<Block> cluster, double weight)
         {
             Dictionary<string, double> grades = MineralWeights(cluster);
-
-            foreach (string key in grades.Keys.ToList())
+            foreach(string key in grades.Keys.ToList())
             {
                 grades[key] /= weight;
                 grades[key] = Math.Round(grades[key], 6);
             }
-
             return grades;
         }
     }
