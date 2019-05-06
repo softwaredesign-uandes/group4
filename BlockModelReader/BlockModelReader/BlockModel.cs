@@ -24,12 +24,12 @@ namespace BlockModelReader
         public void SetBlocks(List<Block> blocks)
         {
             this.blocks = blocks;
-            foreach(Block b in blocks)
-            {
-                if (maxX < b.GetCoordinates()[0]) maxX = b.GetCoordinates()[0];
-                if (maxY < b.GetCoordinates()[1]) maxY = b.GetCoordinates()[1];
-                if (maxZ < b.GetCoordinates()[2]) maxZ = b.GetCoordinates()[2];
-            }
+            blocks.Where(block => block.GetCoordinates()[0] < maxX).
+                Select(block => block.GetCoordinates()[0]);
+            blocks.Where(block => block.GetCoordinates()[1] < maxX).
+                Select(block => block.GetCoordinates()[1]);
+            blocks.Where(block => block.GetCoordinates()[2] < maxX).
+                 Select(block => block.GetCoordinates()[2]);
         }
 
         public List<Block> GetBlocks()
@@ -92,11 +92,7 @@ namespace BlockModelReader
 
         public double TotalWeight(List<Block> blocks)
         {
-            double totalWeight = 0;
-            foreach (Block block in blocks)
-            {
-                totalWeight += block.GetWeight();                
-            }
+            double totalWeight = blocks.Select(block => block.GetWeight()).Sum();
             return totalWeight;
         }
 
@@ -121,8 +117,16 @@ namespace BlockModelReader
                 Dictionary<string, double> grades = block.GetGrades();
                 foreach (var grade in grades.Keys)
                 {
-                    if (!mineralWeight.ContainsKey(grade)) mineralWeight.Add(grade, grades[grade]);
-                    else mineralWeight[grade] += grades[grade] * block.GetWeight();
+                    double gradeWeight = grades[grade] * block.GetWeight();
+                    if (!mineralWeight.ContainsKey(grade))
+                    {
+                        mineralWeight.Add(grade, gradeWeight);
+                    }
+
+                    else
+                    {
+                        mineralWeight[grade] += gradeWeight;
+                    }
                 }
             }
             return mineralWeight;
@@ -172,7 +176,7 @@ namespace BlockModelReader
             return cluster;
         }
 
-        private Dictionary<string, double> CalculateClusterGrades(List<Block> cluster, double weight)
+        public Dictionary<string, double> CalculateClusterGrades(List<Block> cluster, double weight)
         {
             Dictionary<string, double> grades = new Dictionary<string, double>();
             foreach (Block b in cluster)

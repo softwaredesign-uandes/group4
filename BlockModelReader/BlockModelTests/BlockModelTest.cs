@@ -8,11 +8,19 @@ namespace BlockModelTests
 {
     [TestClass]
     public class BlockModelTest
-    { 
+    {
+        private double totalWeight;
+        private Dictionary<string, double> totalMineralWeights;
         private List<Block> GenerateBlocks()
         {
             List<Block> blockList = new List<Block>();
             int id = 0;
+            totalWeight = 0;
+            totalMineralWeights = new Dictionary<string, double>
+            {
+                ["Au"] = 0,
+                ["Cu"] = 0,
+            };
             for (int i = 0; i < 3; i++)
             {
                 for (int j = 0; j < 3; j++)
@@ -20,11 +28,14 @@ namespace BlockModelTests
                     for (int k = 0; k < 3; k++)
                     {
                         double weight = 100 * (j + 1);
+                        totalWeight += weight;
                         Dictionary<string, double> grades = new Dictionary<string, double>
                         {
                             ["Au"] = (i + 1) * 0.1,
                             ["Cu"] = (k + 1) * 0.1
                         };
+                        totalMineralWeights["Au"] += weight*(i + 1) * 0.1;
+                        totalMineralWeights["Cu"] += weight*(k + 1) * 0.1;
                         Block block = new Block(id, i, j, k, weight, grades);
                         blockList.Add(block);
                         id++;
@@ -117,7 +128,26 @@ namespace BlockModelTests
             List<Block> blocks = GenerateBlocks();
             BlockModel blockModel = new BlockModel();
             double weight = blockModel.TotalWeight(blocks);
-            Assert.AreEqual(5400, weight);
+            Assert.AreEqual(totalWeight, weight);
+        }
+
+        [TestMethod]
+        public void Test_EmptyBlockModelMineralWeight()
+        {
+            BlockModel blockModel = new BlockModel();
+            List<Block> blocks = new List<Block>();
+            Dictionary<string, double> mineralWeights = blockModel.MineralWeights(blocks);
+            Dictionary<string, double> emptyMineralWeights = new Dictionary<string, double>();
+            CollectionAssert.AreEquivalent(emptyMineralWeights, mineralWeights);
+        }
+
+        [TestMethod]
+        public void Test_MineralWeights()
+        {
+            BlockModel blockModel = new BlockModel();
+            List<Block> blocks = GenerateBlocks();
+            Dictionary<string, double> mineralWeights = blockModel.MineralWeights(blocks);
+            CollectionAssert.AreEquivalent(totalMineralWeights, mineralWeights);
         }
     }
 }
