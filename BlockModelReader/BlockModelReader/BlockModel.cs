@@ -142,43 +142,10 @@ namespace BlockModelReader
                     int kCount = 0;
                     for (int k = 0; k < maxZ + 1; k += zAmount)
                     {
-                        List<Block> cluster = new List<Block>();
-                        for (int iStep = 0; iStep < xAmount; iStep++)
-                        {
-                            for (int jStep = 0; jStep < yAmount; jStep++)
-                            {
-                                for (int kStep = 0; kStep < xAmount; kStep++)
-                                {
-                                    cluster.Add(SimpleCoordsQuery(i + iStep, j + jStep, k + kStep));
-                                }
-                            }
-                        }
-                        double weight = 0;
-                        Dictionary<string, double> grades = new Dictionary<string, double>();
-                        foreach (Block b in cluster)
-                        {
-                            weight += b.GetWeight();
-                            if(b.GetGrades() != null)
-                            {
-                                foreach(string key in b.GetGrades().Keys)
-                                {
-                                    if (grades.Keys.Contains(key))
-                                    {
-                                        grades[key] += b.GetWeight() * b.GetGrades()[key];
-                                    }
-                                    else
-                                    {
-                                        grades[key] = b.GetWeight() * b.GetGrades()[key];
-                                    }
-                                }
-                            }
-                        }
-                        List<string> keys = new List<string>(grades.Keys);
-                        foreach (string key in keys)
-                        {
-                            grades[key] /= weight;
-                            grades[key] = Math.Round(grades[key], 6);
-                        }
+                        List<Block> cluster = GenerateReblockCluster(xAmount, yAmount, zAmount, i, j, k);
+
+                        double weight = CalculateClusterWeight(cluster);
+                        Dictionary<string, double> grades = CalculateClusterGrades(cluster, weight);
                         blocks.Add(new Block(id, iCount, jCount, kCount, weight, grades));
                         id++;
                         kCount++;
@@ -188,6 +155,62 @@ namespace BlockModelReader
                 iCount++;
             }
             blocks.RemoveRange(0, blockCount);
+        }
+
+        private List<Block> GenerateReblockCluster(int xAmount, int yAmount, int zAmount, int startX, int startY, int startZ)
+        {
+            List<Block> cluster = new List<Block>();
+            for (int iStep = 0; iStep < xAmount; iStep++)
+            {
+                for (int jStep = 0; jStep < yAmount; jStep++)
+                {
+                    for (int kStep = 0; kStep < xAmount; kStep++)
+                    {
+                        cluster.Add(SimpleCoordsQuery(startX + iStep, startY + jStep, startZ + kStep));
+                    }
+                }
+            }
+            return cluster;
+        }
+
+        private double CalculateClusterWeight(List<Block> cluster)
+        {
+            double weight = 0;
+            foreach (Block b in cluster)
+            {
+                weight += b.GetWeight();
+            }
+            return weight;
+        }
+
+        private Dictionary<string, double> CalculateClusterGrades(List<Block> cluster, double weight)
+        {
+            Dictionary<string, double> grades = new Dictionary<string, double>();
+            foreach (Block b in cluster)
+            {
+                if (b.GetGrades() != null)
+                {
+                    foreach (string key in b.GetGrades().Keys)
+                    {
+                        if (grades.Keys.Contains(key))
+                        {
+                            grades[key] += b.GetWeight() * b.GetGrades()[key];
+                        }
+                        else
+                        {
+                            grades[key] = b.GetWeight() * b.GetGrades()[key];
+                        }
+                    }
+                }
+            }
+
+            foreach (string key in grades.Keys)
+            {
+                grades[key] /= weight;
+                grades[key] = Math.Round(grades[key], 6);
+            }
+
+            return grades;
         }
     }
 }
