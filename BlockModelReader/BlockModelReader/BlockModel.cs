@@ -178,26 +178,9 @@ namespace BlockModelReader
 
         public Dictionary<string, double> CalculateClusterGrades(List<Block> cluster, double weight)
         {
-            Dictionary<string, double> grades = new Dictionary<string, double>();
-            foreach (Block b in cluster)
-            {
-                if (b.GetGrades() != null)
-                {
-                    foreach (string key in b.GetGrades().Keys)
-                    {
-                        if (grades.Keys.Contains(key))
-                        {
-                            grades[key] += b.GetWeight() * b.GetGrades()[key];
-                        }
-                        else
-                        {
-                            grades[key] = b.GetWeight() * b.GetGrades()[key];
-                        }
-                    }
-                }
-            }
+            Dictionary<string, double> grades = MineralWeights(cluster);
 
-            foreach (string key in grades.Keys)
+            foreach (string key in grades.Keys.ToList())
             {
                 grades[key] /= weight;
                 grades[key] = Math.Round(grades[key], 6);
