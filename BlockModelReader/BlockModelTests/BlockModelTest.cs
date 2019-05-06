@@ -3,6 +3,7 @@ using System.Text;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using BlockModelReader;
+using System.Linq;
 
 namespace BlockModelTests
 {
@@ -11,6 +12,7 @@ namespace BlockModelTests
     {
         private double totalWeight;
         private Dictionary<string, double> totalMineralWeights;
+        private Dictionary<string, double> clusterMineralWeights;
         private List<Block> GenerateBlocks()
         {
             List<Block> blockList = new List<Block>();
@@ -42,6 +44,11 @@ namespace BlockModelTests
                     }
                 }
             }
+            clusterMineralWeights = totalMineralWeights;
+            clusterMineralWeights["Au"] /= totalWeight;
+            clusterMineralWeights["Au"] = Math.Round(clusterMineralWeights["Au"], 6);
+            clusterMineralWeights["Cu"] /= totalWeight;
+            clusterMineralWeights["Cu"] = Math.Round(clusterMineralWeights["Cu"], 6);
             return blockList;
         }
 
@@ -148,6 +155,16 @@ namespace BlockModelTests
             List<Block> blocks = GenerateBlocks();
             Dictionary<string, double> mineralWeights = blockModel.MineralWeights(blocks);
             CollectionAssert.AreEquivalent(totalMineralWeights, mineralWeights);
+        }
+
+        [TestMethod]
+        public void Test_ClusterGrades()
+        {
+            BlockModel blockModel = new BlockModel();
+            List<Block> blocks = GenerateBlocks();
+            Dictionary<string, double> mineralWeights = 
+                blockModel.CalculateClusterGrades(blocks, totalWeight);
+            CollectionAssert.AreEquivalent(clusterMineralWeights, mineralWeights);
         }
     }
 }
