@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Linq;
 
 namespace BlockModelReader
 {
@@ -144,7 +143,7 @@ namespace BlockModelReader
                     {
                         List<Block> cluster = GenerateReblockCluster(xAmount, yAmount, zAmount, i, j, k);
 
-                        double weight = CalculateClusterWeight(cluster);
+                        double weight = TotalWeight(cluster);
                         Dictionary<string, double> grades = CalculateClusterGrades(cluster, weight);
                         blocks.Add(new Block(id, iCount, jCount, kCount, weight, grades));
                         id++;
@@ -171,16 +170,6 @@ namespace BlockModelReader
                 }
             }
             return cluster;
-        }
-
-        private double CalculateClusterWeight(List<Block> cluster)
-        {
-            double weight = 0;
-            foreach (Block b in cluster)
-            {
-                weight += b.GetWeight();
-            }
-            return weight;
         }
 
         private Dictionary<string, double> CalculateClusterGrades(List<Block> cluster, double weight)
