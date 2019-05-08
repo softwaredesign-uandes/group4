@@ -11,22 +11,11 @@ namespace BlockModelReader
 
         public static void PrintStatistics(BlockModel blockModel)
         {
-            int totalBlocks = blockModel.GetBlocks().Count;
-            double totalWeight = 0;
-            int airBlocks = 0;
-            Dictionary<string, double> mineralWeight = new Dictionary<string, double>();
-            foreach (var block in blockModel.GetBlocks())
-            {
-                Dictionary<string, double> grades = block.GetGrades();
-                totalWeight += block.GetWeight();
-                if (block.GetWeight() == 0) airBlocks++;
-                foreach (var grade in grades.Keys)
-                {
-                    if (!mineralWeight.ContainsKey(grade)) mineralWeight.Add(grade, grades[grade]);
-                    else mineralWeight[grade] += grades[grade] * block.GetWeight();
-                }
-            }
-            double airBlocksPercentage = airBlocks*100 / totalBlocks;
+            List<Block> blocks = blockModel.blocks;
+            int totalBlocks = blocks.Count;
+            double totalWeight = blockModel.TotalWeight(blocks);
+            Dictionary<string, double> mineralWeight = blockModel.MineralWeights(blocks);
+            double airBlocksPercentage = blockModel.AirBlocksPercentage(blocks);
             Console.WriteLine("Statistics");
             Console.WriteLine("1.-Number of Blocks: " + totalBlocks);
             Console.WriteLine("2.-Total Weight of the Deposit: " + totalWeight);
