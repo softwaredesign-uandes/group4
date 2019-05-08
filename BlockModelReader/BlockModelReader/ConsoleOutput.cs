@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace BlockModelReader
 {
-    static class ConsoleOutput
+    public static class ConsoleOutput
     {
 
         public static void PrintStatistics(BlockModel blockModel)
         {
-            List<Block> blocks = blockModel.blocks;
+            List<Block> blocks = blockModel.GetBlocks();
             int totalBlocks = blocks.Count;
             double totalWeight = blockModel.TotalWeight(blocks);
             Dictionary<string, double> mineralWeight = blockModel.MineralWeights(blocks);
@@ -24,7 +24,7 @@ namespace BlockModelReader
             {
                 Console.WriteLine("    *" + mineral + ": " + mineralWeight[mineral]);
             }
-            Console.WriteLine("4.-Air Blocks percentage: " + airBlocksPercentage);
+            Console.WriteLine("4.-Air Blocks percentage: " + airBlocksPercentage + "%");
 
         }
         public static void ConsoleLoop(BlockModel blockModel, string fileName)
@@ -51,15 +51,10 @@ namespace BlockModelReader
                         "Coordinate y: " + yCoordinate + "\n" +
                         "Coordintae z: " + zCoordinate + "\n" +
                         "Block Weight: " + queryResult.GetWeight());
-                    switch (fileName)
+                    Dictionary<string, double> gradesDictionary = queryResult.GetGrades();
+                    foreach (string key in gradesDictionary.Keys)
                     {
-                        case "marvin":
-                            Console.WriteLine("Gold(%): " + queryResult.GetGrades()["Au"] + "\n" +
-                            "Copper(%): " + queryResult.GetGrades()["Cu"]);
-                            break;
-                        case "zuck_small":
-                            Console.WriteLine("Ore(%): " + queryResult.GetGrades()["Ore"]);
-                            break;
+                        Console.WriteLine(key + " grade : " + gradesDictionary[key]);
                     }
    
                 }

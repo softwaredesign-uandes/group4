@@ -15,9 +15,24 @@ namespace BlockModelReader
             Console.WriteLine("Block Model Loader");
             Console.Write("Name of the file: ");
             string fileName = Console.ReadLine().ToLower();
-            FileReader.ReadFile(blockModel, fileName, fileName+".blocks");
+            Console.Write("Expression for Weight: ");
+            string weightExpression = Console.ReadLine().ToLower();
+            Console.Write("Number of Minerals: ");
+            int numberOfMinerals = int.Parse(Console.ReadLine().ToLower());
+            string[] gradeNames = new string[numberOfMinerals];
+            string[] gradeExpressions = new string[numberOfMinerals];
+            for (int i = 0; i < numberOfMinerals; i++)
+            {
+                Console.Write("Mineral " + (i+1) +" Name : ");
+                gradeNames[i] = Console.ReadLine();
+                Console.Write("Expression for " + gradeNames[i] + " Grade : ");
+                gradeExpressions[i] = Console.ReadLine().ToLower();
+            }
+
+            blockModel.SetBlocks(FileReader.ReadFile(weightExpression, gradeNames, gradeExpressions, fileName + ".blocks"));
             ConsoleOutput.PrintStatistics(blockModel);
             ConsoleOutput.ConsoleLoop(blockModel, fileName);
+            Console.ReadKey();
         }
     }
 }

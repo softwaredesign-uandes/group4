@@ -4,24 +4,53 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Data;
 
 namespace BlockModelReader
 {
-    static class FileReader
+    public static class FileReader
     {
-        public static void ReadFile(BlockModel blockModel, string format, string path)
+        public static List<Block> ReadFile(string weightExpression, string[] gradeNames, string[] gradeExpressions, string path)
         {
-
-            switch (format)
+            List<Block> result = new List<Block>();
+            string unmutableWeigthExpression = weightExpression;
+            string[] unmutableGradeExpressions = gradeExpressions;
+            foreach (string line in File.ReadLines(path, Encoding.UTF8))
             {
-                case "marvin":
-                    blockModel.blocks = ReadMarvinFile(path);
-                    break;
-                case "zuck_small":
-                    blockModel.blocks = ReadZuckSmallFile(path);
-                    break;
+                string mutableWeightExpression = (string)unmutableWeigthExpression.Clone();
+                string[] mutableGradeExpressions = (string[])unmutableGradeExpressions.Clone();
+                string[] lineValues = line.Split(' ');
+                int id = int.Parse(lineValues[0]);
+                int xCoordinate = int.Parse(lineValues[1]);
+                int yCoordinate = int.Parse(lineValues[2]);
+                int zCoordinate = int.Parse(lineValues[3]);
+                double weight = SolveExpression(lineValues, unmutableWeigthExpression);
+                Dictionary<string, double> grades = new Dictionary<string, double>();
+                for(int i = 0; i < gradeExpressions.Length; i++)
+                {
+                    grades[gradeNames[i]] = SolveExpression(lineValues, mutableGradeExpressions[i]); 
+                }
+                //Dictionary<string, double> additionalData = new Dictionary<string, double>();
+                //additionalData["proc_profit"] = double.Parse(lineValues[7]);
+                result.Add(new Block(id, xCoordinate, yCoordinate, zCoordinate, weight, grades));
             }
+            return result;
         }
+
+        public static double SolveExpression(string[] lineValues, string expression)
+        {
+            string returnExpression = expression;
+            for (int i = 0; i < 26; i++)
+            {
+                char currentLetter = (char)(i + 97);
+                if (expression.Contains(currentLetter))
+                {
+                    returnExpression = returnExpression.Replace(currentLetter.ToString(), lineValues[4 + i]);
+                }
+            }
+            return Evaluate(returnExpression);
+        }
+
 
         public static List<Block> ReadMarvinFile(string path)
         {
@@ -67,6 +96,15 @@ namespace BlockModelReader
                 result.Add(new Block(id, xCoordinate, yCoordinate, zCoordinate, weight, grades, additionalData));
             }
             return result;
+        }
+
+        private static double Evaluate(string expression)
+        {
+            DataTable table = new DataTable();
+            table.Columns.Add("expression", typeof(string), expression);
+            DataRow row = table.NewRow();
+            table.Rows.Add(row);
+            return double.Parse((string)row["expression"]);
         }
     }
 }

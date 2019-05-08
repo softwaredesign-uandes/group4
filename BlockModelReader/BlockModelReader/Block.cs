@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BlockModelReader
 {
-    class Block
+    public class Block
     {
         private int id, xCoordinate, yCoordinate, zCoordinate;
         private double weight;
@@ -20,7 +20,7 @@ namespace BlockModelReader
             this.zCoordinate = zCoordinate;
             this.weight = weight;
             this.grades = new Dictionary<string, double>();
-            this.additionalData = new Dictionary<string, double>();
+            //this.additionalData = new Dictionary<string, double>();
         }
 
         public Block(int id, int xCoordinate, int yCoordinate, int zCoordinate, double weight, Dictionary<string, double> grades)
@@ -29,8 +29,9 @@ namespace BlockModelReader
             this.xCoordinate = xCoordinate;
             this.yCoordinate = yCoordinate;
             this.zCoordinate = zCoordinate;
+            this.weight = weight;
             this.grades = grades;
-            this.additionalData = new Dictionary<string, double>();
+            //this.additionalData = new Dictionary<string, double>();
         }
 
         public Block(int id, int xCoordinate, int yCoordinate, int zCoordinate, double weight, Dictionary<string, double> grades, Dictionary<string, double> additionalData)
@@ -41,7 +42,7 @@ namespace BlockModelReader
             this.zCoordinate = zCoordinate;
             this.weight = weight;
             this.grades = grades;
-            this.additionalData = additionalData;
+            //this.additionalData = additionalData;
         }
 
         public void SetGrade(string key, double value)
@@ -49,10 +50,10 @@ namespace BlockModelReader
             grades[key] = value;
         }
 
-        public void SetAdditionalData(string key, double value)
+        /*public void SetAdditionalData(string key, double value)
         {
             additionalData[key] = value;
-        }
+        }*/
 
         public int GetId()
         {
@@ -72,6 +73,30 @@ namespace BlockModelReader
         public Dictionary<string, double> GetGrades()
         {
             return grades;
+        }
+        public override bool Equals(object obj)
+        {
+            Block other = obj as Block;
+            if (xCoordinate != other.xCoordinate)
+            {
+                return false;
+            }
+            if (yCoordinate != other.yCoordinate)
+            {
+                return false;
+            }
+            if (weight != other.weight)
+            {
+                return false;
+            }
+            foreach(string key in grades.Keys)
+            {
+                if (grades[key] != other.grades[key])
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }
