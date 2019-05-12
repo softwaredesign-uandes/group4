@@ -171,7 +171,6 @@ namespace BlockModelReader
         {
             Dictionary<string, double> grades = MineralWeights(cluster);
             Dictionary<string, double> newGrades = new Dictionary<string, double>();
-
             newGrades = grades.Keys.ToList().Select(key =>
             {
                 double gradeValue = grades[key] / weight;
