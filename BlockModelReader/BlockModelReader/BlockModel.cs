@@ -141,12 +141,14 @@ namespace BlockModelReader
         public Dictionary<string, double> CalculateClusterGrades(List<Block> cluster, double weight)
         {
             Dictionary<string, double> grades = CalculateMineralWeights(cluster);
-            foreach(string key in grades.Keys.ToList())
+            Dictionary<string, double> newGrades = new Dictionary<string, double>();
+            newGrades = grades.Keys.ToList().Select(key =>
             {
-                grades[key] /= weight;
-                grades[key] = Math.Round(grades[key], 6);
-            }
-            return grades;
+                double gradeValue = grades[key] / weight;
+                gradeValue = Math.Round(gradeValue, 6);
+                return new KeyGradePair(key, gradeValue);
+            }).ToDictionary(keyGradePair => keyGradePair.GetKey(), keyGradePair => keyGradePair.GetValue());
+            return newGrades;
         }
     }
 }
