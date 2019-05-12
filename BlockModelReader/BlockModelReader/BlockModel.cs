@@ -43,35 +43,6 @@ namespace BlockModelReader
             return filteringQuery.First();
         }
 
-        public List<Block> SimpleXQuery(int xCoordinate)
-        {
-            IEnumerable<Block> filteringQuery =
-            from block in blocks
-            where block.GetCoordinates()[0] == xCoordinate
-            select block;
-            return filteringQuery.ToList();
-
-        }
-
-        public List<Block> SimpleYQuery(int yCoordinate)
-        {
-            IEnumerable<Block> filteringQuery =
-            from block in blocks
-            where block.GetCoordinates()[0] == yCoordinate
-            select block;
-            return filteringQuery.ToList();
-
-        }
-
-        public List<Block> SimpleZQuery(int zCoordinate)
-        {
-            IEnumerable<Block> filteringQuery =
-            from block in blocks
-            where block.GetCoordinates()[0] == zCoordinate
-            select block;
-            return filteringQuery.ToList();
-        }
-
         public Block SimpleCoordsQuery(int xCoordinate, int yCoordinate, int zCoordinate)
         {
             IEnumerable<Block> filteringQuery =
@@ -87,13 +58,13 @@ namespace BlockModelReader
             return filteringQuery.First();
         }
 
-        public double TotalWeight(List<Block> blocks)
+        public double GetTotalWeight(List<Block> blocks)
         {
             double totalWeight = blocks.Select(block => block.GetWeight()).Sum();
             return totalWeight;
         }
 
-        public double AirBlocksPercentage(List<Block> blocks)
+        public double CalculateAirBlocksPercentage(List<Block> blocks)
         {
             int totalBlocks = blocks.Count();
             double totalAirBlocks = blocks.Where(block => block.GetWeight() == 0).Select(
@@ -102,7 +73,7 @@ namespace BlockModelReader
             return airBlocksPercentage;
         }
 
-        public Dictionary<string, double> MineralWeights(List<Block> blocks)
+        public Dictionary<string, double> CalculateMineralWeights(List<Block> blocks)
         {
             Dictionary<string, double> mineralWeight = new Dictionary<string, double>();
 
@@ -148,7 +119,7 @@ namespace BlockModelReader
                 int cummulativeY = y * yReblockDimension;
                 int cummulativeZ = z * zReblockDimension;
                 List<Block> cluster = GenerateReblockCluster(xReblockDimension, yReblockDimension, zReblockDimension, cummulativeX, cummulativeY, cummulativeZ);
-                double weight = TotalWeight(cluster);
+                double weight = GetTotalWeight(cluster);
                 Dictionary<string, double> grades = CalculateClusterGrades(cluster, weight);
                 return new Block(i, x, y, z, weight, grades);
             }).ToList();
@@ -169,7 +140,7 @@ namespace BlockModelReader
 
         public Dictionary<string, double> CalculateClusterGrades(List<Block> cluster, double weight)
         {
-            Dictionary<string, double> grades = MineralWeights(cluster);
+            Dictionary<string, double> grades = CalculateMineralWeights(cluster);
             foreach(string key in grades.Keys.ToList())
             {
                 grades[key] /= weight;

@@ -30,8 +30,6 @@ namespace BlockModelReader
                 {
                     grades[gradeNames[i]] = SolveExpression(lineValues, mutableGradeExpressions[i]); 
                 }
-                //Dictionary<string, double> additionalData = new Dictionary<string, double>();
-                //additionalData["proc_profit"] = double.Parse(lineValues[7]);
                 result.Add(new Block(id, xCoordinate, yCoordinate, zCoordinate, weight, grades));
             }
             return result;
@@ -68,7 +66,7 @@ namespace BlockModelReader
                 grades["Cu"] = double.Parse(lineValues[6]);
                 Dictionary<string, double> additionalData = new Dictionary<string, double>();
                 additionalData["proc_profit"] = double.Parse(lineValues[7]);
-                result.Add(new Block(id, xCoordinate, yCoordinate, zCoordinate, weight, grades, additionalData));
+                result.Add(new Block(id, xCoordinate, yCoordinate, zCoordinate, weight, grades));
             }
             return result;
         }
@@ -93,7 +91,7 @@ namespace BlockModelReader
                 additionalData["value"] = double.Parse(lineValues[5]);
                 additionalData["rock_tonnes"] = rockWeight;
                 additionalData["ore_tonnes"] = oreWeight;
-                result.Add(new Block(id, xCoordinate, yCoordinate, zCoordinate, weight, grades, additionalData));
+                result.Add(new Block(id, xCoordinate, yCoordinate, zCoordinate, weight, grades));
             }
             return result;
         }
