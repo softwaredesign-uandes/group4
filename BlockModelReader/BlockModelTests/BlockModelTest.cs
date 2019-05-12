@@ -12,7 +12,6 @@ namespace BlockModelTests
     {
         private double totalWeight;
         private Dictionary<string, double> totalMineralWeights;
-        private Dictionary<string, double> clusterMineralWeights;
         private List<Block> GenerateBlocks()
         {
             List<Block> blockList = new List<Block>();
@@ -44,11 +43,6 @@ namespace BlockModelTests
                     }
                 }
             }
-            clusterMineralWeights = totalMineralWeights;
-            clusterMineralWeights["Au"] /= totalWeight;
-            clusterMineralWeights["Au"] = Math.Round(clusterMineralWeights["Au"], 6);
-            clusterMineralWeights["Cu"] /= totalWeight;
-            clusterMineralWeights["Cu"] = Math.Round(clusterMineralWeights["Cu"], 6);
             return blockList;
         }
 
@@ -115,12 +109,6 @@ namespace BlockModelTests
         }
 
         [TestMethod]
-        public void Test_GenerateReBlockCluster()
-        {
-            BlockModel blockModel = new BlockModel();
-        }
-
-        [TestMethod]
         public void Test_CalculateEmptyClusterWeight()
         {
             List<Block> blocks = new List<Block>();
@@ -165,7 +153,20 @@ namespace BlockModelTests
             List<Block> blocks = GenerateBlocks();
             Dictionary<string, double> mineralWeights = 
                 blockModel.CalculateClusterGrades(blocks, totalWeight);
-            CollectionAssert.AreEquivalent(clusterMineralWeights, mineralWeights);
+            totalMineralWeights["Au"] /= totalWeight;
+            totalMineralWeights["Cu"] /= totalWeight;
+            totalMineralWeights["Au"] = Math.Round(totalMineralWeights["Au"], 6);
+            totalMineralWeights["Cu"] = Math.Round(totalMineralWeights["Cu"], 6);
+            CollectionAssert.AreEquivalent(totalMineralWeights, mineralWeights);
+        }
+
+        [TestMethod]
+        public void Test_AirBlockPercentage()
+        {
+            BlockModel blockModel = new BlockModel();
+            List<Block> blocks = GenerateBlocks();
+            double airPercentage = blockModel.AirBlocksPercentage(blocks);
+            Assert.AreEqual(0, airPercentage);
         }
     }
 }

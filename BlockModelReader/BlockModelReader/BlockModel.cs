@@ -95,12 +95,9 @@ namespace BlockModelReader
 
         public double AirBlocksPercentage(List<Block> blocks)
         {
-            double totalAirBlocks = 0;
-            int totalBlocks = blocks.Count();        
-            foreach (Block block in blocks)
-            {
-                if (block.GetWeight() == 0) totalAirBlocks++;
-            }
+            int totalBlocks = blocks.Count();
+            double totalAirBlocks = blocks.Where(block => block.GetWeight() == 0).Select(
+                block => block.GetWeight()).Sum();
             double airBlocksPercentage = totalAirBlocks / totalBlocks;
             return airBlocksPercentage;
         }
@@ -137,6 +134,11 @@ namespace BlockModelReader
             int zSteps = ((maxZ + 1) / zReblockDimension) + 1;
             int[] numberOfIterarions = Enumerable.Range(0, xSteps * ySteps * zSteps).ToArray();
 
+            if (xReblockDimension == 0 || yReblockDimension == 0 || zReblockDimension == 0
+                || new int[] { xReblockDimension, yReblockDimension, zReblockDimension }.All(x => x == 1))
+            {
+                return;
+            }
             blocks = numberOfIterarions.Select(i =>
             {
                 int x = i / (ySteps * zSteps);
@@ -152,7 +154,7 @@ namespace BlockModelReader
             }).ToList();
         }
 
-        private List<Block> GenerateReblockCluster(int xDimension, int yDimension, int zDimension, int startX, int startY, int startZ)
+        public List<Block> GenerateReblockCluster(int xDimension, int yDimension, int zDimension, int startX, int startY, int startZ)
         {
             int[] numberOfIterarions = Enumerable.Range(0, xDimension * yDimension * zDimension).ToArray();
             List<Block> cluster = numberOfIterarions.Select(i =>
