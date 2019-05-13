@@ -11,7 +11,7 @@ namespace BlockModelReader
 
         public static void PrintStatistics(BlockModel blockModel)
         {
-            List<Block> blocks = blockModel.GetBlocks();
+            List<IReblockable> blocks = blockModel.GetBlocks();
             int totalBlocks = blocks.Count;
             double totalWeight = blockModel.GetTotalWeight(blocks);
             Dictionary<string, double> mineralWeight = blockModel.CalculateMineralWeights(blocks);
@@ -40,7 +40,7 @@ namespace BlockModelReader
                     xCoordinate = int.Parse(inputCoordinates[0]);
                     yCoordinate = int.Parse(inputCoordinates[1]);
                     zCoordinate = int.Parse(inputCoordinates[2]);
-                    Block queryResult = blockModel.SimpleCoordsQuery(xCoordinate, yCoordinate, zCoordinate);
+                    IReblockable queryResult = blockModel.SimpleCoordsQuery(xCoordinate, yCoordinate, zCoordinate);
                     PrintBlockSpecifications(queryResult);
                 }
                 catch (Exception)
@@ -62,7 +62,7 @@ namespace BlockModelReader
             return inputCoordinates;
         } 
 
-        public static void PrintBlockSpecifications(Block queryResult)
+        public static void PrintBlockSpecifications(IReblockable queryResult)
         {
             int[] coordinates = queryResult.GetCoordinates();
             Console.WriteLine("Block specifications:\n" +

@@ -10,9 +10,9 @@ namespace BlockModelReader
 {
     public static class FileReader
     {
-        public static List<Block> ReadFile(string weightExpression, string[] gradeNames, string[] gradeExpressions, string path)
+        public static List<IReblockable> ReadFile(string weightExpression, string[] gradeNames, string[] gradeExpressions, string path)
         {
-            List<Block> result = new List<Block>();
+            List<IReblockable> result = new List<IReblockable>();
             string unmutableWeigthExpression = weightExpression;
             string[] unmutableGradeExpressions = gradeExpressions;
             foreach (string line in File.ReadLines(path, Encoding.UTF8))
@@ -50,9 +50,9 @@ namespace BlockModelReader
         }
 
 
-        public static List<Block> ReadMarvinFile(string path)
+        public static List<IReblockable> ReadMarvinFile(string path)
         {
-            List<Block> result = new List<Block>();
+            List<IReblockable> result = new List<IReblockable>();
             foreach (string line in File.ReadLines(path, Encoding.UTF8))
             {
                 string[] lineValues = line.Split(' ');
@@ -71,9 +71,9 @@ namespace BlockModelReader
             return result;
         }
 
-        public static List<Block> ReadZuckSmallFile(string path)
+        public static List<IReblockable> ReadZuckSmallFile(string path)
         {
-            List<Block> result = new List<Block>();
+            List<IReblockable> result = new List<IReblockable>();
             foreach (string line in File.ReadLines(path, Encoding.UTF8))
             {
                 string[] lineValues = line.Split(' ');

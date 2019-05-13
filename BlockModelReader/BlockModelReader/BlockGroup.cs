@@ -26,17 +26,75 @@ namespace BlockModelReader
 
         public Dictionary<string, double> GetGrades()
         {
-            throw new NotImplementedException();
+            Dictionary<string, double> mineralWeights = new Dictionary<string, double>();
+            foreach (IReblockable block in blocks)
+            {
+                Dictionary<string, double> grades = block.GetGrades();
+                grades = grades.Keys.ToList().Select(grade =>
+                {
+                    double gradeWeight = grades[grade] * block.GetWeight();
+                    if (!mineralWeights.ContainsKey(grade))
+                    {
+                        mineralWeights.Add(grade, gradeWeight);
+                    }
+                    else
+                    {
+                        mineralWeights[grade] += gradeWeight;
+                    }
+                    return new KeyGradePair(grade, gradeWeight);
+                }).ToDictionary(KeyGradePair => KeyGradePair.GetKey(), KeyGradePair => KeyGradePair.GetValue());
+            }
+
+            Dictionary<string, double> newGrades = new Dictionary<string, double>();
+            newGrades = mineralWeights.Keys.ToList().Select(key =>
+            {
+                double gradeValue = mineralWeights[key] / GetWeight();
+                gradeValue = Math.Round(gradeValue, 6);
+                return new KeyGradePair(key, gradeValue);
+            }).ToDictionary(keyGradePair => keyGradePair.GetKey(), keyGradePair => keyGradePair.GetValue());
+            return newGrades;
         }
 
         public int GetId()
         {
-            throw new NotImplementedException();
+            return id;
         }
 
         public double GetWeight()
         {
-            throw new NotImplementedException();
+            double totalWeight = blocks.Select(block => block.GetWeight()).Sum();
+            return totalWeight;
+        }
+
+        public override bool Equals(object obj)
+        {
+            IReblockable other = obj as IReblockable;
+            if (xCoordinate != other.GetCoordinates()[0])
+            {
+                return false;
+            }
+            if (yCoordinate != other.GetCoordinates()[1])
+            {
+                return false;
+            }
+            if (zCoordinate != other.GetCoordinates()[2])
+            {
+                return false;
+            }
+            if (GetWeight() != other.GetWeight())
+            {
+                return false;
+            }
+            Dictionary<string, double> otherGrades = other.GetGrades();
+            Dictionary<string, double> grades = GetGrades();
+            foreach (string key in grades.Keys)
+            {
+                if (grades[key] != otherGrades[key])
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }

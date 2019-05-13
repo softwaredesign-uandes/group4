@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BlockModelReader
 {
-    interface IReblockable
+    public interface IReblockable
     {
         int GetId();
         int[] GetCoordinates();
