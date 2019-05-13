@@ -141,6 +141,7 @@ namespace BlockModelTests
         {
             BlockModel blockModel = new BlockModel();
             List<Block> blocks = GenerateBlocks();
+            blockModel.SetBlocks(blocks);
             Dictionary<string, double> mineralWeights = blockModel.MineralWeights(blocks);
             CollectionAssert.AreEquivalent(totalMineralWeights, mineralWeights);
         }
