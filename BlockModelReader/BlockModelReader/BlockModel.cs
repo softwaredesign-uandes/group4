@@ -13,7 +13,6 @@ namespace BlockModelReader
         private int maxY;
         private int maxZ;
 
-
         public BlockModel()
         {
             maxX = 0;
@@ -80,19 +79,19 @@ namespace BlockModelReader
             foreach (Block block in blocks)
             {
                 Dictionary<string, double> grades = block.GetGrades();
-                foreach (var grade in grades.Keys)
+                grades = grades.Keys.ToList().Select(grade =>
                 {
                     double gradeWeight = grades[grade] * block.GetWeight();
                     if (!mineralWeight.ContainsKey(grade))
                     {
                         mineralWeight.Add(grade, gradeWeight);
                     }
-
                     else
                     {
                         mineralWeight[grade] += gradeWeight;
                     }
-                }
+                    return new KeyGradePair(grade, gradeWeight);
+                }).ToDictionary(KeyGradePair => KeyGradePair.GetKey(), KeyGradePair => KeyGradePair.GetValue());
             }
             return mineralWeight;
         }
