@@ -44,9 +44,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Block.cs" />
+    <Compile Include="BlockGroup.cs" />
     <Compile Include="BlockModel.cs" />
     <Compile Include="ConsoleOutput.cs" />
     <Compile Include="FileReader.cs" />
+    <Compile Include="IReblockable.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
