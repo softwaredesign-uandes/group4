@@ -12,9 +12,9 @@ namespace BlockModelTests
     {
         private double totalWeight;
         private Dictionary<string, double> totalMineralWeights;
-        private List<Block> GenerateBlocks()
+        private List<IReblockable> GenerateBlocks()
         {
-            List<Block> blockList = new List<Block>();
+            List<IReblockable> blockList = new List<IReblockable>();
             int id = 0;
             totalWeight = 0;
             totalMineralWeights = new Dictionary<string, double>
@@ -50,7 +50,7 @@ namespace BlockModelTests
         public void Test_ReBlock()
         {
             BlockModel blockModel = new BlockModel();
-            List<Block> blockList = GenerateBlocks();
+            List<IReblockable> blockList = GenerateBlocks();
             blockModel.SetBlocks(blockList);
 
             List<Block> result = new List<Block>();
@@ -103,7 +103,7 @@ namespace BlockModelTests
             result.Add(new Block(5, 1, 0, 1, 300, g6));
             result.Add(new Block(6, 1, 1, 0, 600, g7));
             result.Add(new Block(7, 1, 1, 1, 300, g8));
-            blockModel.ReBlock(2, 2, 2);
+            blockModel.ReBlock(2, 2, 2, false);
 
             CollectionAssert.AreEqual(result, blockModel.GetBlocks());
         }
@@ -111,7 +111,7 @@ namespace BlockModelTests
         [TestMethod]
         public void Test_CalculateEmptyClusterWeight()
         {
-            List<Block> blocks = new List<Block>();
+            List<IReblockable> blocks = new List<IReblockable>();
             BlockModel blockModel = new BlockModel();
             double weight = blockModel.GetTotalWeight(blocks);
             Assert.AreEqual(0, weight);
@@ -120,7 +120,7 @@ namespace BlockModelTests
         [TestMethod]
         public void Test_TotalWeight()
         {
-            List<Block> blocks = GenerateBlocks();
+            List<IReblockable> blocks = GenerateBlocks();
             BlockModel blockModel = new BlockModel();
             double weight = blockModel.GetTotalWeight(blocks);
             Assert.AreEqual(totalWeight, weight);
@@ -130,7 +130,7 @@ namespace BlockModelTests
         public void Test_EmptyBlockModelMineralWeight()
         {
             BlockModel blockModel = new BlockModel();
-            List<Block> blocks = new List<Block>();
+            List<IReblockable> blocks = new List<IReblockable>();
             Dictionary<string, double> mineralWeights = blockModel.CalculateMineralWeights(blocks);
             Dictionary<string, double> emptyMineralWeights = new Dictionary<string, double>();
             CollectionAssert.AreEquivalent(emptyMineralWeights, mineralWeights);
@@ -140,7 +140,7 @@ namespace BlockModelTests
         public void Test_MineralWeights()
         {
             BlockModel blockModel = new BlockModel();
-            List<Block> blocks = GenerateBlocks();
+            List<IReblockable> blocks = GenerateBlocks();
             Dictionary<string, double> mineralWeights = blockModel.CalculateMineralWeights(blocks);
             CollectionAssert.AreEquivalent(totalMineralWeights, mineralWeights);
         }
@@ -149,7 +149,7 @@ namespace BlockModelTests
         public void Test_ClusterGrades()
         {
             BlockModel blockModel = new BlockModel();
-            List<Block> blocks = GenerateBlocks();
+            List<IReblockable> blocks = GenerateBlocks();
             Dictionary<string, double> mineralWeights = 
                 blockModel.CalculateClusterGrades(blocks, totalWeight);
             totalMineralWeights["Au"] /= totalWeight;
@@ -163,7 +163,7 @@ namespace BlockModelTests
         public void Test_AirBlockPercentage()
         {
             BlockModel blockModel = new BlockModel();
-            List<Block> blocks = GenerateBlocks();
+            List<IReblockable> blocks = GenerateBlocks();
             double airPercentage = blockModel.CalculateAirBlocksPercentage(blocks);
             Assert.AreEqual(0, airPercentage);
         }

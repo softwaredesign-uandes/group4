@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BlockModelReader
 {
-    public class Block
+    public class Block: IReblockable
     {
         private int id, xCoordinate, yCoordinate, zCoordinate;
         private double weight;
@@ -57,22 +57,27 @@ namespace BlockModelReader
         }
         public override bool Equals(object obj)
         {
-            Block other = obj as Block;
-            if (xCoordinate != other.xCoordinate)
+            IReblockable other = obj as IReblockable;
+            if (xCoordinate != other.GetCoordinates()[0])
             {
                 return false;
             }
-            if (yCoordinate != other.yCoordinate)
+            if (yCoordinate != other.GetCoordinates()[1])
             {
                 return false;
             }
-            if (weight != other.weight)
+            if (zCoordinate != other.GetCoordinates()[2])
             {
                 return false;
             }
+            if (weight != other.GetWeight())
+            {
+                return false;
+            }
+            Dictionary<string, double> otherGrades = other.GetGrades();
             foreach(string key in grades.Keys)
             {
-                if (grades[key] != other.grades[key])
+                if (grades[key] != otherGrades[key])
                 {
                     return false;
                 }

@@ -8,7 +8,7 @@ namespace BlockModelReader
 {
     public class BlockModel
     {
-        private List<Block> blocks;
+        private List<IReblockable> blocks;
         private int maxX;
         private int maxY;
         private int maxZ;
@@ -20,7 +20,7 @@ namespace BlockModelReader
             maxZ = 0;
         }
 
-        public void SetBlocks(List<Block> blocks)
+        public void SetBlocks(List<IReblockable> blocks)
         {
             this.blocks = blocks;
             maxX = blocks.Max(block => block.GetCoordinates()[0]);
@@ -28,23 +28,23 @@ namespace BlockModelReader
             maxZ = blocks.Max(block => block.GetCoordinates()[2]);
         }
 
-        public List<Block> GetBlocks()
+        public List<IReblockable> GetBlocks()
         {
             return blocks;
         }
 
-        public Block SimpleIdQuery(int id)
+        public IReblockable SimpleIdQuery(int id)
         {
-            IEnumerable<Block> filteringQuery =
+            IEnumerable<IReblockable> filteringQuery =
             from block in blocks
             where block.GetId() == 3
             select block;
             return filteringQuery.First();
         }
 
-        public Block SimpleCoordsQuery(int xCoordinate, int yCoordinate, int zCoordinate)
+        public IReblockable SimpleCoordsQuery(int xCoordinate, int yCoordinate, int zCoordinate)
         {
-            IEnumerable<Block> filteringQuery =
+            IEnumerable<IReblockable> filteringQuery =
             from block in blocks
             where block.GetCoordinates()[0] == xCoordinate
             && block.GetCoordinates()[1] == yCoordinate
@@ -57,13 +57,13 @@ namespace BlockModelReader
             return filteringQuery.First();
         }
 
-        public double GetTotalWeight(List<Block> blocks)
+        public double GetTotalWeight(List<IReblockable> blocks)
         {
             double totalWeight = blocks.Select(block => block.GetWeight()).Sum();
             return totalWeight;
         }
 
-        public double CalculateAirBlocksPercentage(List<Block> blocks)
+        public double CalculateAirBlocksPercentage(List<IReblockable> blocks)
         {
             int totalBlocks = blocks.Count();
             double totalAirBlocks = blocks.Where(block => block.GetWeight() == 0).Select(
@@ -72,11 +72,11 @@ namespace BlockModelReader
             return airBlocksPercentage;
         }
 
-        public Dictionary<string, double> CalculateMineralWeights(List<Block> blocks)
+        public Dictionary<string, double> CalculateMineralWeights(List<IReblockable> blocks)
         {
             Dictionary<string, double> mineralWeight = new Dictionary<string, double>();
 
-            foreach (Block block in blocks)
+            foreach (IReblockable block in blocks)
             {
                 Dictionary<string, double> grades = block.GetGrades();
                 grades = grades.Keys.ToList().Select(grade =>
@@ -96,7 +96,7 @@ namespace BlockModelReader
             return mineralWeight;
         }
 
-        public void ReBlock(int xReblockDimension, int yReblockDimension, int zReblockDimension)
+        public void ReBlock(int xReblockDimension, int yReblockDimension, int zReblockDimension, bool isVirtual)
         {
             int blockCount = blocks.Count();
             int xSteps = ((maxX + 1) / xReblockDimension) + 1;
@@ -112,22 +112,29 @@ namespace BlockModelReader
             blocks = numberOfIterarions.Select(i =>
             {
                 int x = i / (ySteps * zSteps);
-                int y = (i / zSteps) % ySteps;
+                int y = i / zSteps % ySteps;
                 int z = i % zSteps;
                 int cummulativeX = x * xReblockDimension;
                 int cummulativeY = y * yReblockDimension;
                 int cummulativeZ = z * zReblockDimension;
-                List<Block> cluster = GenerateReblockCluster(xReblockDimension, yReblockDimension, zReblockDimension, cummulativeX, cummulativeY, cummulativeZ);
-                double weight = GetTotalWeight(cluster);
-                Dictionary<string, double> grades = CalculateClusterGrades(cluster, weight);
-                return new Block(i, x, y, z, weight, grades);
+                List<IReblockable> cluster = GenerateReblockCluster(xReblockDimension, yReblockDimension, zReblockDimension, cummulativeX, cummulativeY, cummulativeZ);
+                if (isVirtual)
+                {
+                    return (IReblockable)new BlockGroup(i, x, y, z, cluster);
+                }
+                else
+                {
+                    double weight = GetTotalWeight(cluster);
+                    Dictionary<string, double> grades = CalculateClusterGrades(cluster, weight);
+                    return (IReblockable)new Block(i, x, y, z, weight, grades);
+                }
             }).ToList();
         }
 
-        public List<Block> GenerateReblockCluster(int xDimension, int yDimension, int zDimension, int startX, int startY, int startZ)
+        public List<IReblockable> GenerateReblockCluster(int xDimension, int yDimension, int zDimension, int startX, int startY, int startZ)
         {
             int[] numberOfIterarions = Enumerable.Range(0, xDimension * yDimension * zDimension).ToArray();
-            List<Block> cluster = numberOfIterarions.Select(i =>
+            List<IReblockable> cluster = numberOfIterarions.Select(i =>
             {
                 int x = i / (yDimension * zDimension);
                 int y = (i / zDimension) % yDimension;
@@ -137,7 +144,7 @@ namespace BlockModelReader
             return cluster;
         }
 
-        public Dictionary<string, double> CalculateClusterGrades(List<Block> cluster, double weight)
+        public Dictionary<string, double> CalculateClusterGrades(List<IReblockable> cluster, double weight)
         {
             Dictionary<string, double> grades = CalculateMineralWeights(cluster);
             Dictionary<string, double> newGrades = new Dictionary<string, double>();
