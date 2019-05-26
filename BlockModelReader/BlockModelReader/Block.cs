@@ -11,7 +11,6 @@ namespace BlockModelReader
         private int id, xCoordinate, yCoordinate, zCoordinate;
         private double weight;
         private Dictionary<string, double> grades;
-        private Dictionary<string, double> additionalData;
         public Block(int id, int xCoordinate, int yCoordinate, int zCoordinate, double weight)
         {
             this.id = id;
@@ -19,8 +18,7 @@ namespace BlockModelReader
             this.yCoordinate = yCoordinate;
             this.zCoordinate = zCoordinate;
             this.weight = weight;
-            this.grades = new Dictionary<string, double>();
-            //this.additionalData = new Dictionary<string, double>();
+            grades = new Dictionary<string, double>();
         }
 
         public Block(int id, int xCoordinate, int yCoordinate, int zCoordinate, double weight, Dictionary<string, double> grades)
@@ -31,29 +29,12 @@ namespace BlockModelReader
             this.zCoordinate = zCoordinate;
             this.weight = weight;
             this.grades = grades;
-            //this.additionalData = new Dictionary<string, double>();
-        }
-
-        public Block(int id, int xCoordinate, int yCoordinate, int zCoordinate, double weight, Dictionary<string, double> grades, Dictionary<string, double> additionalData)
-        {
-            this.id = id;
-            this.xCoordinate = xCoordinate;
-            this.yCoordinate = yCoordinate;
-            this.zCoordinate = zCoordinate;
-            this.weight = weight;
-            this.grades = grades;
-            //this.additionalData = additionalData;
         }
 
         public void SetGrade(string key, double value)
         {
             grades[key] = value;
         }
-
-        /*public void SetAdditionalData(string key, double value)
-        {
-            additionalData[key] = value;
-        }*/
 
         public int GetId()
         {

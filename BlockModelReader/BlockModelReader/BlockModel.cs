@@ -13,7 +13,6 @@ namespace BlockModelReader
         private int maxY;
         private int maxZ;
 
-
         public BlockModel()
         {
             maxX = 0;
@@ -43,35 +42,6 @@ namespace BlockModelReader
             return filteringQuery.First();
         }
 
-        public List<Block> SimpleXQuery(int xCoordinate)
-        {
-            IEnumerable<Block> filteringQuery =
-            from block in blocks
-            where block.GetCoordinates()[0] == xCoordinate
-            select block;
-            return filteringQuery.ToList();
-
-        }
-
-        public List<Block> SimpleYQuery(int yCoordinate)
-        {
-            IEnumerable<Block> filteringQuery =
-            from block in blocks
-            where block.GetCoordinates()[0] == yCoordinate
-            select block;
-            return filteringQuery.ToList();
-
-        }
-
-        public List<Block> SimpleZQuery(int zCoordinate)
-        {
-            IEnumerable<Block> filteringQuery =
-            from block in blocks
-            where block.GetCoordinates()[0] == zCoordinate
-            select block;
-            return filteringQuery.ToList();
-        }
-
         public Block SimpleCoordsQuery(int xCoordinate, int yCoordinate, int zCoordinate)
         {
             IEnumerable<Block> filteringQuery =
@@ -87,13 +57,13 @@ namespace BlockModelReader
             return filteringQuery.First();
         }
 
-        public double TotalWeight(List<Block> blocks)
+        public double GetTotalWeight(List<Block> blocks)
         {
             double totalWeight = blocks.Select(block => block.GetWeight()).Sum();
             return totalWeight;
         }
 
-        public double AirBlocksPercentage(List<Block> blocks)
+        public double CalculateAirBlocksPercentage(List<Block> blocks)
         {
             int totalBlocks = blocks.Count();
             double totalAirBlocks = blocks.Where(block => block.GetWeight() == 0).Select(
@@ -102,26 +72,26 @@ namespace BlockModelReader
             return airBlocksPercentage;
         }
 
-        public Dictionary<string, double> MineralWeights(List<Block> blocks)
+        public Dictionary<string, double> CalculateMineralWeights(List<Block> blocks)
         {
             Dictionary<string, double> mineralWeight = new Dictionary<string, double>();
 
             foreach (Block block in blocks)
             {
                 Dictionary<string, double> grades = block.GetGrades();
-                foreach (var grade in grades.Keys)
+                grades = grades.Keys.ToList().Select(grade =>
                 {
                     double gradeWeight = grades[grade] * block.GetWeight();
                     if (!mineralWeight.ContainsKey(grade))
                     {
                         mineralWeight.Add(grade, gradeWeight);
                     }
-
                     else
                     {
                         mineralWeight[grade] += gradeWeight;
                     }
-                }
+                    return new KeyGradePair(grade, gradeWeight);
+                }).ToDictionary(KeyGradePair => KeyGradePair.GetKey(), KeyGradePair => KeyGradePair.GetValue());
             }
             return mineralWeight;
         }
@@ -148,7 +118,7 @@ namespace BlockModelReader
                 int cummulativeY = y * yReblockDimension;
                 int cummulativeZ = z * zReblockDimension;
                 List<Block> cluster = GenerateReblockCluster(xReblockDimension, yReblockDimension, zReblockDimension, cummulativeX, cummulativeY, cummulativeZ);
-                double weight = TotalWeight(cluster);
+                double weight = GetTotalWeight(cluster);
                 Dictionary<string, double> grades = CalculateClusterGrades(cluster, weight);
                 return new Block(i, x, y, z, weight, grades);
             }).ToList();
@@ -169,13 +139,15 @@ namespace BlockModelReader
 
         public Dictionary<string, double> CalculateClusterGrades(List<Block> cluster, double weight)
         {
-            Dictionary<string, double> grades = MineralWeights(cluster);
-            foreach(string key in grades.Keys.ToList())
+            Dictionary<string, double> grades = CalculateMineralWeights(cluster);
+            Dictionary<string, double> newGrades = new Dictionary<string, double>();
+            newGrades = grades.Keys.ToList().Select(key =>
             {
-                grades[key] /= weight;
-                grades[key] = Math.Round(grades[key], 6);
-            }
-            return grades;
+                double gradeValue = grades[key] / weight;
+                gradeValue = Math.Round(gradeValue, 6);
+                return new KeyGradePair(key, gradeValue);
+            }).ToDictionary(keyGradePair => keyGradePair.GetKey(), keyGradePair => keyGradePair.GetValue());
+            return newGrades;
         }
     }
 }

@@ -13,17 +13,17 @@ namespace BlockModelReader
         {
             List<Block> blocks = blockModel.GetBlocks();
             int totalBlocks = blocks.Count;
-            double totalWeight = blockModel.TotalWeight(blocks);
-            Dictionary<string, double> mineralWeight = blockModel.MineralWeights(blocks);
-            double airBlocksPercentage = blockModel.AirBlocksPercentage(blocks);
+            double totalWeight = blockModel.GetTotalWeight(blocks);
+            Dictionary<string, double> mineralWeight = blockModel.CalculateMineralWeights(blocks);
+            double airBlocksPercentage = blockModel.CalculateAirBlocksPercentage(blocks);
             Console.WriteLine("Statistics");
             Console.WriteLine("1.-Number of Blocks: " + totalBlocks);
             Console.WriteLine("2.-Total Weight of the Deposit: " + totalWeight);
             Console.WriteLine("3.-Total Mineral Weight: ");
-            foreach (var mineral in mineralWeight.Keys)
-            {
-                Console.WriteLine("    *" + mineral + ": " + mineralWeight[mineral]);
-            }
+            List<string> mineralWeightKeys = mineralWeight.Keys.ToList();
+            mineralWeightKeys.ForEach(
+                mineral => Console.WriteLine("    *" + mineral + ": " + mineralWeight[mineral]
+                ));
             Console.WriteLine("4.-Air Blocks percentage: " + airBlocksPercentage + "%");
 
         }
@@ -34,36 +34,47 @@ namespace BlockModelReader
                 int xCoordinate;
                 int yCoordinate;
                 int zCoordinate;
-                Console.WriteLine("x coordinate of the block");
-                string xCoordinateString = Console.ReadLine();
-                Console.WriteLine("y coordinate of the block");
-                string yCoordinateString = Console.ReadLine();
-                Console.WriteLine("z coordinate of the block");
-                string zCoordinateString = Console.ReadLine();
+                string[] inputCoordinates = SetInputCoordinates();
                 try
                 {
-                    xCoordinate = int.Parse(xCoordinateString);
-                    yCoordinate = int.Parse(yCoordinateString);
-                    zCoordinate = int.Parse(zCoordinateString);
+                    xCoordinate = int.Parse(inputCoordinates[0]);
+                    yCoordinate = int.Parse(inputCoordinates[1]);
+                    zCoordinate = int.Parse(inputCoordinates[2]);
                     Block queryResult = blockModel.SimpleCoordsQuery(xCoordinate, yCoordinate, zCoordinate);
-                    Console.WriteLine("Block specifications:\n" +
-                        "Coordinate x: " + xCoordinate + "\n" +
-                        "Coordinate y: " + yCoordinate + "\n" +
-                        "Coordintae z: " + zCoordinate + "\n" +
-                        "Block Weight: " + queryResult.GetWeight());
-                    Dictionary<string, double> gradesDictionary = queryResult.GetGrades();
-                    foreach (string key in gradesDictionary.Keys)
-                    {
-                        Console.WriteLine(key + " grade : " + gradesDictionary[key]);
-                    }
-   
+                    PrintBlockSpecifications(queryResult);
                 }
                 catch (Exception)
                 {
                     Console.WriteLine("One or more arguments are not integers");
                 }
-
             }
+        }
+
+        public static string[] SetInputCoordinates()
+        {
+            string[] inputCoordinates =  new string[3];
+            Console.WriteLine("x coordinate of the block");
+            inputCoordinates[0] = Console.ReadLine();
+            Console.WriteLine("y coordinate of the block");
+            inputCoordinates[1] = Console.ReadLine();
+            Console.WriteLine("z coordinate of the block");
+            inputCoordinates[2] = Console.ReadLine();
+            return inputCoordinates;
+        } 
+
+        public static void PrintBlockSpecifications(Block queryResult)
+        {
+            int[] coordinates = queryResult.GetCoordinates();
+            Console.WriteLine("Block specifications:\n" +
+                        "Coordinate x: " + coordinates[0] + "\n" +
+                        "Coordinate y: " + coordinates[1] + "\n" +
+                        "Coordintae z: " + coordinates[2] + "\n" +
+                        "Block Weight: " + queryResult.GetWeight());
+            Dictionary<string, double> gradesDictionary = queryResult.GetGrades();
+            List<string> gradesDictionaryKeys = gradesDictionary.Keys.ToList();
+            gradesDictionaryKeys.ForEach(
+                grade => Console.WriteLine(grade + " grade: " + gradesDictionary[grade])
+                );
         }
     }
 }

@@ -113,7 +113,7 @@ namespace BlockModelTests
         {
             List<Block> blocks = new List<Block>();
             BlockModel blockModel = new BlockModel();
-            double weight = blockModel.TotalWeight(blocks);
+            double weight = blockModel.GetTotalWeight(blocks);
             Assert.AreEqual(0, weight);
         }
 
@@ -122,7 +122,7 @@ namespace BlockModelTests
         {
             List<Block> blocks = GenerateBlocks();
             BlockModel blockModel = new BlockModel();
-            double weight = blockModel.TotalWeight(blocks);
+            double weight = blockModel.GetTotalWeight(blocks);
             Assert.AreEqual(totalWeight, weight);
         }
 
@@ -131,7 +131,7 @@ namespace BlockModelTests
         {
             BlockModel blockModel = new BlockModel();
             List<Block> blocks = new List<Block>();
-            Dictionary<string, double> mineralWeights = blockModel.MineralWeights(blocks);
+            Dictionary<string, double> mineralWeights = blockModel.CalculateMineralWeights(blocks);
             Dictionary<string, double> emptyMineralWeights = new Dictionary<string, double>();
             CollectionAssert.AreEquivalent(emptyMineralWeights, mineralWeights);
         }
@@ -141,7 +141,7 @@ namespace BlockModelTests
         {
             BlockModel blockModel = new BlockModel();
             List<Block> blocks = GenerateBlocks();
-            Dictionary<string, double> mineralWeights = blockModel.MineralWeights(blocks);
+            Dictionary<string, double> mineralWeights = blockModel.CalculateMineralWeights(blocks);
             CollectionAssert.AreEquivalent(totalMineralWeights, mineralWeights);
         }
 
@@ -164,7 +164,7 @@ namespace BlockModelTests
         {
             BlockModel blockModel = new BlockModel();
             List<Block> blocks = GenerateBlocks();
-            double airPercentage = blockModel.AirBlocksPercentage(blocks);
+            double airPercentage = blockModel.CalculateAirBlocksPercentage(blocks);
             Assert.AreEqual(0, airPercentage);
         }
     }
