@@ -8,10 +8,10 @@ namespace BlockModelReader
 {
     class Program
     {
-
         static void Main(string[] args)
         {
-            BlockModel blockModel = new BlockModel();
+            GrapeVineServer.StartServer();
+            /*BlockModel blockModel = new BlockModel();
             Console.WriteLine("Block Model Loader");
             Console.Write("Name of the file: ");
             string fileName = Console.ReadLine().ToLower();
@@ -32,7 +32,7 @@ namespace BlockModelReader
             blockModel.SetBlocks(FileReader.ReadFile(weightExpression, gradeNames, gradeExpressions, fileName + ".blocks"));
             ConsoleOutput.PrintStatistics(blockModel);
             ConsoleOutput.ConsoleLoop(blockModel, fileName);
-            Console.ReadKey();
+            Console.ReadKey();*/
         }
     }
 }
