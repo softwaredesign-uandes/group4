@@ -1,21 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BlockModelReader
 {
     class BlockGroup : IReblockable
     {
-        private List<IReblockable> blocks;
-        private int id;
-        private int xCoordinate;
-        private int yCoordinate;
-        private int zCoordinate;
+        private const double TOLERANCE = 0.001;
+
+        private readonly List<IReblockable> blocks;
+        private readonly int id;
+        private readonly int xCoordinate;
+        private readonly int yCoordinate;
+        private readonly int zCoordinate;
         public BlockGroup(int id, int xCoordinate, int yCoordinate, int zCoordinate, List<IReblockable> blocks)
         {
             this.id = id;
+            this.xCoordinate = xCoordinate;
+            this.yCoordinate = yCoordinate;
+            this.zCoordinate = zCoordinate;
             this.blocks = blocks;
         }
 
@@ -45,8 +48,7 @@ namespace BlockModelReader
                 }).ToDictionary(KeyGradePair => KeyGradePair.GetKey(), KeyGradePair => KeyGradePair.GetValue());
             }
 
-            Dictionary<string, double> newGrades = new Dictionary<string, double>();
-            newGrades = mineralWeights.Keys.ToList().Select(key =>
+            Dictionary<string, double> newGrades = mineralWeights.Keys.ToList().Select(key =>
             {
                 double gradeValue = mineralWeights[key] / GetWeight();
                 gradeValue = Math.Round(gradeValue, 6);
@@ -68,7 +70,10 @@ namespace BlockModelReader
 
         public override bool Equals(object obj)
         {
-            IReblockable other = obj as IReblockable;
+            if (!(obj is IReblockable other))
+            {
+                return false;
+            }
             if (xCoordinate != other.GetCoordinates()[0])
             {
                 return false;
@@ -81,7 +86,7 @@ namespace BlockModelReader
             {
                 return false;
             }
-            if (GetWeight() != other.GetWeight())
+            if (Math.Abs(GetWeight() - other.GetWeight()) > TOLERANCE)
             {
                 return false;
             }
@@ -89,12 +94,17 @@ namespace BlockModelReader
             Dictionary<string, double> grades = GetGrades();
             foreach (string key in grades.Keys)
             {
-                if (grades[key] != otherGrades[key])
+                if (Math.Abs(grades[key] - otherGrades[key]) > TOLERANCE)
                 {
                     return false;
                 }
             }
             return true;
+        }
+
+        public override int GetHashCode()
+        {
+            return 0;
         }
     }
 }

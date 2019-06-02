@@ -49,7 +49,7 @@ namespace BlockModelReader
                 if (payload.last == "true")
                 {
                     context.Response.SendResponse("Finished");
-                    BlockAssembler.SetBlocks(FileReader.ReadList());
+                    MineralDeposit.SetBlocks(FileReader.ReadList());
                     Console.WriteLine("CHECK");
                 }
                 else

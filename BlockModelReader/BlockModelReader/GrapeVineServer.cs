@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace BlockModelReader
 {
-    class GrapeVineServer
+    public static class GrapeVineServer
     {
-
         public static void StartServer()
         {
             using (var server = new RestServer())

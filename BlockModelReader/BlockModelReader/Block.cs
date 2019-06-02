@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BlockModelReader
 {
     public class Block: IReblockable
     {
-        private int id, xCoordinate, yCoordinate, zCoordinate;
-        private double weight;
-        private Dictionary<string, double> grades;
+        private const double TOLERANCE = 0.001;
+
+        private readonly int id, xCoordinate, yCoordinate, zCoordinate;
+        private readonly double weight;
+        private readonly Dictionary<string, double> grades;
+
         public Block(int id, int xCoordinate, int yCoordinate, int zCoordinate, double weight)
         {
             this.id = id;
@@ -57,7 +57,10 @@ namespace BlockModelReader
         }
         public override bool Equals(object obj)
         {
-            IReblockable other = obj as IReblockable;
+            if (!(obj is IReblockable other))
+            {
+                return false;
+            }  
             if (xCoordinate != other.GetCoordinates()[0])
             {
                 return false;
@@ -70,19 +73,24 @@ namespace BlockModelReader
             {
                 return false;
             }
-            if (weight != other.GetWeight())
+            if (Math.Abs(weight - other.GetWeight()) > TOLERANCE)
             {
                 return false;
             }
             Dictionary<string, double> otherGrades = other.GetGrades();
             foreach(string key in grades.Keys)
             {
-                if (grades[key] != otherGrades[key])
+                if (Math.Abs(grades[key] - otherGrades[key]) > TOLERANCE)
                 {
                     return false;
                 }
             }
             return true;
+        }
+
+        public override int GetHashCode()
+        {
+            return 0;
         }
     }
 }

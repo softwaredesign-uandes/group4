@@ -12,12 +12,19 @@ namespace BlockModelReader
         private int maxX;
         private int maxY;
         private int maxZ;
+        private int id;
 
-        public BlockModel()
+        public BlockModel(int id)
         {
             maxX = 0;
             maxY = 0;
             maxZ = 0;
+            this.id = id;
+        }
+
+        public int GetId()
+        {
+            return id;
         }
 
         public void SetBlocks(List<IReblockable> blocks)

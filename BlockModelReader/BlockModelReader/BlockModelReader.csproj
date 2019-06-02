@@ -51,7 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Block.cs" />
-    <Compile Include="BlockAssembler.cs" />
+    <Compile Include="MineralDeposit.cs" />
     <Compile Include="BlockGroup.cs" />
     <Compile Include="BlockModel.cs" />
     <Compile Include="ConsoleOutput.cs" />
@@ -59,6 +59,7 @@
     <Compile Include="KeyGradePair.cs" />
     <Compile Include="IReblockable.cs" />
     <Compile Include="GrapeVineServer.cs" />
+    <Compile Include="MineralDepositsEnvironment.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Routes.cs" />
