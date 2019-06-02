@@ -1,0 +1,1 @@
+ngrok http 1234 -host-header="localhost:1234"
