@@ -34,7 +34,7 @@ namespace BlockModelReader
                 {
                     grades[gradeNames[i]] = SolveExpression(lineValues, mutableGradeExpressions[i]); 
                 }
-                result.Add(new Block(id, xCoordinate, yCoordinate, zCoordinate, weight, grades));
+                result.Add(new Block(xCoordinate, yCoordinate, zCoordinate, weight, grades));
             }
             return result;
         }
@@ -79,7 +79,7 @@ namespace BlockModelReader
                 {
                     grades[oreNames[i]] = SolveExpression(lineValues.Select(x => x.ToString()).ToArray(), mutableGradeExpressions[i]);
                 }
-                result.Add(new Block(id, xCoordinate, yCoordinate, zCoordinate, weight, grades));
+                result.Add(new Block(xCoordinate, yCoordinate, zCoordinate, weight, grades));
             }
             return result;
         }
@@ -118,7 +118,7 @@ namespace BlockModelReader
                 {
                     ["proc_profit"] = double.Parse(lineValues[7])
                 };
-                result.Add(new Block(id, xCoordinate, yCoordinate, zCoordinate, weight, grades));
+                result.Add(new Block(xCoordinate, yCoordinate, zCoordinate, weight, grades));
             }
             return result;
         }
@@ -147,7 +147,7 @@ namespace BlockModelReader
                     ["rock_tonnes"] = rockWeight,
                     ["ore_tonnes"] = oreWeight
                 };
-                result.Add(new Block(id, xCoordinate, yCoordinate, zCoordinate, weight, grades));
+                result.Add(new Block(xCoordinate, yCoordinate, zCoordinate, weight, grades));
             }
             return result;
         }

@@ -11,6 +11,7 @@ namespace BlockModelReader
     {
         public static void StartServer()
         {
+            MineralDepositsEnvironment.InitializeEnvironment();
             using (var server = new RestServer())
             {
                 server.LogToConsole().Start();

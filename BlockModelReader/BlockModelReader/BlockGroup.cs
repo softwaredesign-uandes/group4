@@ -4,6 +4,7 @@ using System.Linq;
 
 namespace BlockModelReader
 {
+    [Serializable]
     class BlockGroup : IReblockable
     {
         private const double TOLERANCE = 0.001;
@@ -13,13 +14,14 @@ namespace BlockModelReader
         private readonly int xCoordinate;
         private readonly int yCoordinate;
         private readonly int zCoordinate;
-        public BlockGroup(int id, int xCoordinate, int yCoordinate, int zCoordinate, List<IReblockable> blocks)
+        public BlockGroup(int xCoordinate, int yCoordinate, int zCoordinate, List<IReblockable> blocks)
         {
-            this.id = id;
+            id = Block.BlockIdCount;
             this.xCoordinate = xCoordinate;
             this.yCoordinate = yCoordinate;
             this.zCoordinate = zCoordinate;
             this.blocks = blocks;
+            Block.BlockIdCount++;
         }
 
         public int[] GetCoordinates()
