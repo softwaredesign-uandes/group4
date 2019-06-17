@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,7 +35,7 @@ namespace BlockModelReader
                 context.Response.SendResponse(responseString);
                 return context;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 context.Response.SendResponse(e.ToString());
                 return context;
@@ -84,10 +85,11 @@ namespace BlockModelReader
                 dynamic payload = JsonConvert.DeserializeObject(context.Request.Payload);
                 if (payload.block_model.x_indices != null)
                 {
+
                     int[] xIndices = payload.block_model.x_indices.ToObject<int[]>();
                     int[] yIndices = payload.block_model.y_indices.ToObject<int[]>();
                     int[] zIndices = payload.block_model.z_indices.ToObject<int[]>();
-                    double[] weights = payload.block_model.z_indices.ToObject<double[]>();
+                    double[] weights = payload.block_model.weights.ToObject<double[]>();
                     Dictionary<string, double[]> grades = payload.block_model.grades.ToObject<Dictionary<string, double[]>>();
                     int[] blockIterations = Enumerable.Range(0, xIndices.Length).ToArray();
                     List<IReblockable> blocks = blockIterations.Select(i =>
@@ -102,6 +104,15 @@ namespace BlockModelReader
                     BlockModel blockModel = new BlockModel();
                     blockModel.SetBlocks(blocks);
                     MineralDepositsEnvironment.AddBlockModel(blockModel);
+                    if (payload.block_model.mineral_deposit != null)
+                    {
+                        string mineralDepositName = payload.block_model.mineral_deposit.ToObject<string>();
+                        MineralDeposit mineralDeposit = MineralDepositsEnvironment.GetMineralDeposit(mineralDepositName);
+                        if (mineralDeposit != null)
+                        {
+                            mineralDeposit.AddBlockModel(blockModel);
+                        }
+                    }
                     context.Response.SendResponse("Successfuly Added Block Model");
                 }
                 else if (payload.block_model.base_block_model_id != null)
@@ -200,6 +211,45 @@ namespace BlockModelReader
                 context.Response.SendResponse(e.ToString());
                 return context;
             }
+        }
+
+        [RestRoute(HttpMethod = HttpMethod.POST, PathInfo = "/block_models/[id]/block")]
+        public IHttpContext GetBlockXYZ(IHttpContext context)
+        {
+
+                context.Response.ContentType = ContentType.JSON;
+                dynamic payload = JsonConvert.DeserializeObject(context.Request.Payload);
+                if (payload.block.x_index != null)
+                {
+                    int id = int.Parse(context.Request.PathParameters["id"]);
+                    int xIndex = payload.block.x_index.ToObject<int>();
+                    int yIndex = payload.block.y_index.ToObject<int>();
+                    int zIndex = payload.block.z_index.ToObject<int>();
+                    double weight = payload.block.weight.ToObject<double>();
+                    Dictionary<string, double> grades = payload.block.grades.ToObject<Dictionary<string, double>>();
+                    context.Response.ContentType = ContentType.JSON;
+                    BlockModel blockModel = MineralDepositsEnvironment.GetBlockModel(id);
+                    blockModel.EditBlock(xIndex, yIndex, zIndex, weight, grades);
+                    context.Response.SendResponse("Successfuly Added Reblocked Block Model");
+                }
+                return context;
+        }
+
+        [RestRoute(HttpMethod = HttpMethod.GET, PathInfo = "/block_models/[id]/files/[filename]")]
+        public IHttpContext GetJavascript(IHttpContext context)
+        {
+            string filename = context.Request.PathParameters["filename"];
+            context.Response.ContentType = ContentType.HTML;
+            context.Response.SendResponse(new FileStream("../../../block_model_viewer-master/files/"+filename, FileMode.Open));
+            return context;
+        }
+
+        [RestRoute(HttpMethod = HttpMethod.GET, PathInfo = "block_models/[id]/view")]
+        public IHttpContext Visualizer(IHttpContext context)
+        {
+            context.Response.ContentType = ContentType.HTML;
+            context.Response.SendResponse(new FileStream("../../../block_model_viewer-master/blocks.html", FileMode.Open));
+            return context;
         }
     }
 }

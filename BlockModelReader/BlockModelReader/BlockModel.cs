@@ -54,6 +54,13 @@ namespace BlockModelReader
             maxZ = blocks.Max(block => block.GetCoordinates()[2]);
         }
 
+        public void EditBlock(int x, int y, int z, double weight, Dictionary<string, double> grades)
+        {
+            IReblockable block = SimpleCoordsQuery(x, y, z);
+            int blockId = block.GetId();
+            blocks[blocks.IndexOf(block)] = new Block(blockId, x, y, z, weight, grades);
+        }
+
         public List<IReblockable> GetBlocks()
         {
             return blocks;
