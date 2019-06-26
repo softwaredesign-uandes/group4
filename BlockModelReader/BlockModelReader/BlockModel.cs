@@ -1,23 +1,49 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace BlockModelReader
 {
+    [Serializable]
     public class BlockModel
     {
         private List<IReblockable> blocks;
         private int maxX;
         private int maxY;
         private int maxZ;
+        private int id;
+        private static int blockModelIdCount;
+
+        public static void SetIdCount(int idCount)
+        {
+            blockModelIdCount = idCount;
+        }
+
+        public static void SerializeIdCount()
+        {
+            IFormatter formatter = new BinaryFormatter();
+            Stream stream = new FileStream("BlockModelCurrentIdCount.dat", FileMode.Create, FileAccess.Write);
+            formatter.Serialize(stream, blockModelIdCount);
+            stream.Close();
+        }
 
         public BlockModel()
         {
             maxX = 0;
             maxY = 0;
             maxZ = 0;
+            id = blockModelIdCount;
+            blockModelIdCount++;
+        }
+
+        public int GetId()
+        {
+            return id;
         }
 
         public void SetBlocks(List<IReblockable> blocks)
@@ -35,11 +61,7 @@ namespace BlockModelReader
 
         public IReblockable SimpleIdQuery(int id)
         {
-            IEnumerable<IReblockable> filteringQuery =
-            from block in blocks
-            where block.GetId() == 3
-            select block;
-            return filteringQuery.First();
+            return blocks.First(i => i.GetId() == id);
         }
 
         public IReblockable SimpleCoordsQuery(int xCoordinate, int yCoordinate, int zCoordinate)
@@ -52,7 +74,7 @@ namespace BlockModelReader
             select block;
             if (filteringQuery.Count() == 0)
             {
-                return new Block(0, 0, 0, 0, 0);
+                return new Block(0, 0, 0, 0);
             }
             return filteringQuery.First();
         }
@@ -96,7 +118,7 @@ namespace BlockModelReader
             return mineralWeight;
         }
 
-        public void ReBlock(int xReblockDimension, int yReblockDimension, int zReblockDimension, bool isVirtual)
+        public List<IReblockable> ReBlock(int xReblockDimension, int yReblockDimension, int zReblockDimension, bool isVirtual)
         {
             int blockCount = blocks.Count();
             int xSteps = ((maxX + 1) / xReblockDimension) + 1;
@@ -107,9 +129,9 @@ namespace BlockModelReader
             if (xReblockDimension == 0 || yReblockDimension == 0 || zReblockDimension == 0
                 || new int[] { xReblockDimension, yReblockDimension, zReblockDimension }.All(x => x == 1))
             {
-                return;
+                return null;
             }
-            blocks = numberOfIterarions.Select(i =>
+            return numberOfIterarions.Select(i =>
             {
                 int x = i / (ySteps * zSteps);
                 int y = i / zSteps % ySteps;
@@ -120,13 +142,13 @@ namespace BlockModelReader
                 List<IReblockable> cluster = GenerateReblockCluster(xReblockDimension, yReblockDimension, zReblockDimension, cummulativeX, cummulativeY, cummulativeZ);
                 if (isVirtual)
                 {
-                    return (IReblockable)new BlockGroup(i, x, y, z, cluster);
+                    return (IReblockable)new BlockGroup(x, y, z, cluster);
                 }
                 else
                 {
                     double weight = GetTotalWeight(cluster);
                     Dictionary<string, double> grades = CalculateClusterGrades(cluster, weight);
-                    return (IReblockable)new Block(i, x, y, z, weight, grades);
+                    return (IReblockable)new Block(x, y, z, weight, grades);
                 }
             }).ToList();
         }

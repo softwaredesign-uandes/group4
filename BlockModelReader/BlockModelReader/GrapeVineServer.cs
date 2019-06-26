@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace BlockModelReader
 {
-    class GrapeVineServer
+    public static class GrapeVineServer
     {
-
         public static void StartServer()
         {
+            MineralDepositsEnvironment.InitializeEnvironment();
             using (var server = new RestServer())
             {
                 server.LogToConsole().Start();

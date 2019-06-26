@@ -1,34 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace BlockModelReader
 {
+    [Serializable]
     public class Block: IReblockable
     {
-        private int id, xCoordinate, yCoordinate, zCoordinate;
-        private double weight;
-        private Dictionary<string, double> grades;
-        public Block(int id, int xCoordinate, int yCoordinate, int zCoordinate, double weight)
+        private const double TOLERANCE = 0.001;
+
+        private readonly int id, xCoordinate, yCoordinate, zCoordinate;
+        private readonly double weight;
+        private readonly Dictionary<string, double> grades;
+
+        public static int BlockIdCount { get; set; }
+
+        public static void SerializeIdCount()
         {
-            this.id = id;
+            IFormatter formatter = new BinaryFormatter();
+            Stream stream = new FileStream("BlockCurrentIdCount.dat", FileMode.Create, FileAccess.Write);
+            formatter.Serialize(stream, BlockIdCount);
+            stream.Close();
+        }
+
+        public Block(int xCoordinate, int yCoordinate, int zCoordinate, double weight)
+        {
+            id = BlockIdCount;
             this.xCoordinate = xCoordinate;
             this.yCoordinate = yCoordinate;
             this.zCoordinate = zCoordinate;
             this.weight = weight;
             grades = new Dictionary<string, double>();
+            BlockIdCount++;
         }
 
-        public Block(int id, int xCoordinate, int yCoordinate, int zCoordinate, double weight, Dictionary<string, double> grades)
+        public Block(int xCoordinate, int yCoordinate, int zCoordinate, double weight, Dictionary<string, double> grades)
         {
-            this.id = id;
+            id = BlockIdCount;
             this.xCoordinate = xCoordinate;
             this.yCoordinate = yCoordinate;
             this.zCoordinate = zCoordinate;
             this.weight = weight;
             this.grades = grades;
+            BlockIdCount++;
         }
 
         public void SetGrade(string key, double value)
@@ -57,7 +73,10 @@ namespace BlockModelReader
         }
         public override bool Equals(object obj)
         {
-            IReblockable other = obj as IReblockable;
+            if (!(obj is IReblockable other))
+            {
+                return false;
+            }  
             if (xCoordinate != other.GetCoordinates()[0])
             {
                 return false;
@@ -70,19 +89,24 @@ namespace BlockModelReader
             {
                 return false;
             }
-            if (weight != other.GetWeight())
+            if (Math.Abs(weight - other.GetWeight()) > TOLERANCE)
             {
                 return false;
             }
             Dictionary<string, double> otherGrades = other.GetGrades();
             foreach(string key in grades.Keys)
             {
-                if (grades[key] != otherGrades[key])
+                if (Math.Abs(grades[key] - otherGrades[key]) > TOLERANCE)
                 {
                     return false;
                 }
             }
             return true;
+        }
+
+        public override int GetHashCode()
+        {
+            return 0;
         }
     }
 }

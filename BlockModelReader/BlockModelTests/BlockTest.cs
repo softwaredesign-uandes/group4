@@ -16,7 +16,7 @@ namespace BlockModelTests
                 ["Au"] = 0.005678,
                 ["Cu"] = 0.00463
             };
-            Block block = new Block(0, 0, 0, 0, 6.78, grades);
+            Block block = new Block(0, 0, 0, 6.78, grades);
             block.SetGrade("Au", 0.03);
             Assert.AreEqual(block.GetGrades()["Au"], 0.03);
         }
@@ -27,7 +27,7 @@ namespace BlockModelTests
             List<Block> blocks = new List<Block>();
             for (int i = 0; i < 5; i++)
             {
-                Block block = new Block(i, i, i + 1, i + 2, 200);
+                Block block = new Block(i, i + 1, i + 2, 200);
                 blocks.Add(block);
             }
             int thirdBlockId = blocks[2].GetId();
@@ -40,7 +40,7 @@ namespace BlockModelTests
             List<Block> blocks = new List<Block>();
             for (int i = 0; i < 5; i++)
             {
-                Block block = new Block(i, i + 3, i + 1, i + 2, 200);
+                Block block = new Block(i + 3, i + 1, i + 2, 200);
                 blocks.Add(block);
             }
             int[] secondBlockCoordinates = blocks[1].GetCoordinates();
@@ -50,7 +50,7 @@ namespace BlockModelTests
 
         public void Test_GetWeight()
         {
-            Block block = new Block(1, 1, 1, 1, 6.76);
+            Block block = new Block(1, 1, 1, 6.76);
             double weight = block.GetWeight();
             Assert.AreEqual(weight, 6.76);
         }
@@ -66,7 +66,7 @@ namespace BlockModelTests
                     ["Au"] = (i + 1) * 0.56,
                     ["Cu"] = (i + 3) * 0.34
                 };
-                Block block = new Block(i, i + 3, i + 1, i + 2, 200, grades);
+                Block block = new Block(i + 3, i + 1, i + 2, 200, grades);
                 blocks.Add(block);
             }
 

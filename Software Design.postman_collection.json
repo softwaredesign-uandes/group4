@@ -1,0 +1,214 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Software Design",
+		"_postman_id": "e6df36a1-ceaa-0580-9f13-18282f776ee1",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Mineral Deposit",
+			"request": {
+				"url": "localhost:1234/mineral_deposits/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"mineral_deposit\" : { \"name\" : \"Bla\" } }"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Mineral Deposits",
+			"request": {
+				"url": "localhost:1234/mineral_deposits/",
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"mineral_deposit\" : { \"name\" : \"Bla\" } }"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get Mineral Deposit",
+			"request": {
+				"url": "localhost:1234/mineral_deposit/",
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"mineral_deposit\" : { \"name\" : \"Bla\" } }"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Create Block Model",
+			"request": {
+				"url": "localhost:1234/block_models/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n\t\"block_model\" : {\r\n\t\t\"x_indices\" : [1,2,3], \r\n\t\t\"y_indices\" : [1,2,3], \r\n\t\t\"z_indices\" :[1,2,3], \r\n\t\t\"weights\": [10,10,10], \r\n\t\t\"grades\": { \r\n\t\t\t\"cu\": [2,2,2], \r\n\t\t\t\"au\": [3,3,3]\r\n\t\t}\r\n\t}\r\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Reblock Block Model",
+			"request": {
+				"url": "localhost:1234/block_models/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n\t\"block_model\" : \r\n\t{ \r\n\t\t\"base_block_model_id\": 2,\r\n\t\t\"reblock_x\": 3, \r\n\t\t\"reblock_y\": 3,\r\n\t\t\"reblock_z\": 3 \r\n\t}\r\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Block Models",
+			"request": {
+				"url": "localhost:1234/block_models/",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n\t\"block_model\" : \r\n\t{ \r\n\t\t\"base_block_model_id\": 0,\r\n\t\t\"reblock_x\": 3, \r\n\t\t\"reblock_y\": 3,\r\n\t\t\"reblock_z\": 3 \r\n\t}\r\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get Block Model",
+			"request": {
+				"url": "localhost:1234/block_models/0",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n\t\"block_model\" : \r\n\t{ \r\n\t\t\"base_block_model_id\": 0,\r\n\t\t\"reblock_x\": 3, \r\n\t\t\"reblock_y\": 3,\r\n\t\t\"reblock_z\": 3 \r\n\t}\r\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get Blocks",
+			"request": {
+				"url": "localhost:1234/block_models/0/blocks",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n\t\"block_model\" : \r\n\t{ \r\n\t\t\"base_block_model_id\": 0,\r\n\t\t\"reblock_x\": 3, \r\n\t\t\"reblock_y\": 3,\r\n\t\t\"reblock_z\": 3 \r\n\t}\r\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get Block",
+			"request": {
+				"url": "localhost:1234/block_models/0/blocks/0",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n\t\"block_model\" : \r\n\t{ \r\n\t\t\"base_block_model_id\": 0,\r\n\t\t\"reblock_x\": 3, \r\n\t\t\"reblock_y\": 3,\r\n\t\t\"reblock_z\": 3 \r\n\t}\r\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
