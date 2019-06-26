@@ -10,6 +10,10 @@ namespace BlockModelReader
 {
     public static class FileReader
     {
+        private static string weightExpression;
+        private static string[] oreNames;
+        private static string[] oreExpressions;
+        private static List<double[]> data = new List<double[]>();
         public static List<IReblockable> ReadFile(string weightExpression, string[] gradeNames, string[] gradeExpressions, string path)
         {
             List<IReblockable> result = new List<IReblockable>();
@@ -29,6 +33,51 @@ namespace BlockModelReader
                 for(int i = 0; i < gradeExpressions.Length; i++)
                 {
                     grades[gradeNames[i]] = SolveExpression(lineValues, mutableGradeExpressions[i]); 
+                }
+                result.Add(new Block(id, xCoordinate, yCoordinate, zCoordinate, weight, grades));
+            }
+            return result;
+        }
+
+        public static void SetWeightExpression(string weightExpression)
+        {
+            FileReader.weightExpression = weightExpression;
+        }
+        public static void SetOreNames(string[] oreNames)
+        {
+            FileReader.oreNames = oreNames;
+        }
+        public static void SetOreExpressions(string[] oreExpressions)
+        {
+            FileReader.oreExpressions = oreExpressions;
+        }
+        public static void AddData(double[] row)
+        {
+            data.Add(row);
+        }
+        public static void ClearData()
+        {
+            data = new List<double[]>();
+        }
+        public static List<IReblockable> ReadList()
+        {
+            List<IReblockable> result = new List<IReblockable>();
+            string unmutableWeigthExpression = weightExpression;
+            string[] unmutableGradeExpressions = oreExpressions;
+            foreach (double[] lineValues in data)
+            {
+                string mutableWeightExpression = (string)unmutableWeigthExpression.Clone();
+                string[] mutableGradeExpressions = (string[])unmutableGradeExpressions.Clone();
+                int id = (int)lineValues[0];
+                int xCoordinate = (int)lineValues[1];
+                int yCoordinate = (int)lineValues[2];
+                int zCoordinate = (int)lineValues[3];
+                
+                double weight = SolveExpression(lineValues.Select(x => x.ToString()).ToArray(), unmutableWeigthExpression);
+                Dictionary<string, double> grades = new Dictionary<string, double>();
+                for (int i = 0; i < oreExpressions.Length; i++)
+                {
+                    grades[oreNames[i]] = SolveExpression(lineValues.Select(x => x.ToString()).ToArray(), mutableGradeExpressions[i]);
                 }
                 result.Add(new Block(id, xCoordinate, yCoordinate, zCoordinate, weight, grades));
             }
