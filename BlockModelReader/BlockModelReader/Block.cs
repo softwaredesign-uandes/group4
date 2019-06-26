@@ -47,6 +47,17 @@ namespace BlockModelReader
             BlockIdCount++;
         }
 
+        public Block(int id, int xCoordinate, int yCoordinate, int zCoordinate, double weight, Dictionary<string, double> grades)
+        {
+            this.id = id;
+            this.xCoordinate = xCoordinate;
+            this.yCoordinate = yCoordinate;
+            this.zCoordinate = zCoordinate;
+            this.weight = weight;
+            this.grades = grades;
+            BlockIdCount++;
+        }
+
         public void SetGrade(string key, double value)
         {
             grades[key] = value;

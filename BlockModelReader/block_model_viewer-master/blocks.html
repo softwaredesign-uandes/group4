@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<title>three.js webgl - interactive - voxel painter</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link type="text/css" rel="stylesheet" href="files/main.css">
+		<style>
+			body {
+				background-color: #f0f0f0;
+				color: #444;
+			}
+			a {
+				color: #08f;
+			}
+		</style>
+	</head>
+	<body>
+		<div style="display: inline; position:absolute; z-index: 1;"><h1 class="overlay" id="overlay_header"></h1></div>
+		<div style="display: inline; position:absolute; z-index: auto; " id="canvas"></div>
+		<script src="files/three.js"></script>
+		<script src="files/orbitControls.js"></script>
+
+		<script src="files/WebGL.js"></script>
+		<script src="files/jquery.min.js"></script>
+
+		<script>
+			var url = window.location.toString();
+			var splitted_url = url.split('/');
+			var id = splitted_url[splitted_url.length - 2];
+			var ajax_url = "/block_models/" + id + "/blocks"
+
+			var blocks = []
+			$.ajax({
+	            type: "GET", 
+	            dataType: 'json',
+	            url: ajax_url,
+	            async: false,
+	            contentType: "application/json; charset=utf-8",
+	            success: function (msg) {
+	                blocks = msg["blocks"];                
+	            }
+ 			});
+
+			var colors = [];
+			var ngrades = blocks[0].grades.length
+			var grades = []
+			var currentGrade = 0;
+			
+			for( var i = 0; i < ngrades; i++)
+			{
+				grades.push( Object.keys(blocks[0].grades[i])[0]);
+				colors.push(Math.random());
+			}
+
+
+			if ( WEBGL.isWebGLAvailable() === false ) {
+
+				document.body.appendChild( WEBGL.getWebGLErrorMessage() );
+
+			}
+
+						console.log(grades);
+
+			var camera, scene, renderer;
+			var controls;
+			var cubeGeometry;
+
+			var blockMeshes = [];
+			var blockSize = 50;
+
+			var overlayHeader = $("#overlay_header");
+			overlayHeader.text(grades[currentGrade]);
+			var transparent = false;
+
+			init();
+			animate();
+
+			function init() {
+
+				createScene();
+
+				createLights();
+
+				createObjects();
+
+				createCamera();
+
+				createRenderer();
+
+				createCameraControls();
+
+				setEventListeners();
+			}
+
+			function createScene() {
+				scene = new THREE.Scene();
+				scene.background = new THREE.Color( 0xf0f0f0 );
+			}
+
+			function createLights() {
+				var ambientLight = new THREE.AmbientLight( 0x606060 );
+				scene.add( ambientLight );
+
+				var light = new THREE.PointLight( 0xffffff );
+				light.position.set( 1000, 1000, 1000 );
+				scene.add( light );
+			}
+
+			function createObjects() {
+
+				cubeGeometry = new THREE.BoxBufferGeometry( blockSize, blockSize, blockSize );
+
+				loadBlockModel();
+			}
+
+
+
+
+			function loadBlockModel() {
+				function addBlock(block) {
+					var grade_value = block.grades[currentGrade][Object.keys(block.grades[currentGrade])[0]]
+					var cubeMaterial = new THREE.MeshLambertMaterial( { color: getBlockColor(block), 
+						opacity: Math.max(0.02, grade_value), transparent: transparent } );
+					var blockMesh = new THREE.Mesh( cubeGeometry, cubeMaterial );
+					
+					var blockSizeWithOffset = blockSize * 1.1;
+					blockMesh.position.set( blockSizeWithOffset * block.x_index,
+						blockSizeWithOffset * block.y_index, blockSizeWithOffset * block.z_index);
+					blockMeshes.push(blockMesh);
+		
+					scene.add( blockMesh );
+					
+				}
+
+				function getBlockColor(block) {
+					var grade_value = block.grades[currentGrade][Object.keys(block.grades[currentGrade])[0]]
+					if (grade_value < 0.001)
+						return new THREE.Color(0x999999);
+					var hue = colors[currentGrade];
+					var lightning = Math.floor(grade_value * 70);
+					var hsl = "hsl("+ hue*180 + ", 100%, " + lightning + "%)";
+					return new THREE.Color(hsl);
+				}
+
+				clearScene();
+				for(var i=0; i<blocks.length; i++) {
+					addBlock(blocks[i]);
+				}
+			}
+
+			function createCamera() {
+				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 10000 );
+				camera.position.set( 2000, 2000, 3300 );
+				camera.lookAt( 0, 0, 0 );
+				camera.up.set(0, 0, 1);
+				scene.add(camera);
+			}
+
+			function createRenderer() {
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				$("#canvas").append( renderer.domElement );
+			}
+
+			function createCameraControls() {
+				controls = new THREE.OrbitControls( camera, renderer.domElement );
+				controls.update();
+			}
+
+			function setEventListeners() {
+				window.addEventListener( 'resize', onWindowResize, false );
+				document.addEventListener( 'keydown', onDocumentKeyDown, false );
+			}
+
+			function clearScene() {
+				for(var i = 0; i < blockMeshes.length; i++) {
+					scene.remove(blockMeshes[i]);
+				}; 
+			}
+
+			function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+			}
+
+			function onDocumentKeyDown( event ) {
+				switch ( event.keyCode ) {
+					case 89: //a
+						if(currentGrade + 1 >= ngrades){
+							currentGrade = 0;
+						}
+						else{
+							currentGrade++;
+						}
+						loadBlockModel();
+						overlayHeader.text(grades[currentGrade]);
+						break;
+					case 84: //t
+						transparent = !transparent;
+						loadBlockModel();
+						break;
+
+				}
+			}
+
+			function animate() {
+
+				requestAnimationFrame( animate );
+
+				controls.update();
+
+				renderer.render( scene, camera );
+
+
+			}
+
+		</script>
+		
+</body></html>

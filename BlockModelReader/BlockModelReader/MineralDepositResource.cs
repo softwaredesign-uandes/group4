@@ -17,8 +17,7 @@ namespace BlockModelReader
         [RestRoute(HttpMethod = HttpMethod.POST, PathInfo = "/mineral_deposits/")]
         public IHttpContext CreateMineralDeposit(IHttpContext context)
         {
-            try
-            {
+
                 context.Response.ContentType = ContentType.JSON;
                 dynamic payload = JsonConvert.DeserializeObject(context.Request.Payload);
                 string name = payload.mineral_deposit.ToObject<Dictionary<string, string>>()["name"];
@@ -26,12 +25,7 @@ namespace BlockModelReader
                 context.Response.SendResponse("Mineral Deposit Successfuly Added");
                 MineralDepositsEnvironment.SerializePersistentData();
                 return context;
-            }
-            catch (Exception e)
-            {
-                context.Response.SendResponse(e.ToString());
-                return context;
-            }
+
         }
 
         [RestRoute(HttpMethod = HttpMethod.GET, PathInfo = "/mineral_deposits/")]

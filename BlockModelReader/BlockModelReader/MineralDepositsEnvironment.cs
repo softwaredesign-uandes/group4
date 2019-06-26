@@ -78,7 +78,11 @@ namespace BlockModelReader
 
         public static void AddMineralDeposit(string name)
         {
-            mineralDeposits.Add(new MineralDeposit(name));
+            MineralDeposit mineralDeposit = GetMineralDeposit(name);
+            if (mineralDeposit == null)
+            {
+                mineralDeposits.Add(new MineralDeposit(name));
+            }
         }
 
         public static void AddBlockModel(BlockModel blockModel)
@@ -98,6 +102,18 @@ namespace BlockModelReader
         public static MineralDeposit GetMineralDeposit(int id)
         {
             return mineralDeposits.First(i => i.GetId() == id);
+        }
+
+        public static MineralDeposit GetMineralDeposit(string name)
+        {
+            try
+            {
+                return mineralDeposits.First(i => i.GetName() == name);
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
         public static List<MineralDeposit> GetMineralDeposits()
